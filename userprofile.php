@@ -1,3 +1,8 @@
+<?php
+  include('config.php');
+  if($conn->connect_error){
+    die("connection failed: " . $conn->connect_error);}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

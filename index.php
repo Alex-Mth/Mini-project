@@ -69,7 +69,7 @@ include 'config.php';
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto">
                         <a href="index.html" class="nav-item nav-link active">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="about.php" class="nav-item nav-link">About</a>
                         <?php
 session_start();
 
@@ -366,13 +366,13 @@ if (isset($_SESSION['username'])) {
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">
-                                        <a href=""><img class="img-fluid" src="img/property-3.jpg" alt=""></a>
+                                        <a href="shop_single.html?item=3"><img class="img-fluid" src="img/property-3.jpg" alt=""></a>
                                         <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">For Sell</div>
                                         <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">Office</div>
                                     </div>
                                     <div class="p-4 pb-0">
                                         <h5 class="text-primary mb-3">$10,445</h5>
-                                        <a class="d-block h5 mb-2" href="">The Old Mill</a>
+                                        <a class="d-block h5 mb-2" href="shop_single.html?item=3">The Old Mill</a>
                                         <p><i class="fa fa-map-marker-alt text-primary me-2"></i>45 Water Lane, Riverdale, USA</p>
                                     </div>
                                     <div class="d-flex border-top">
@@ -385,13 +385,13 @@ if (isset($_SESSION['username'])) {
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">
-                                        <a href=""><img class="img-fluid" src="img/property-4.jpg" alt=""></a>
+                                        <a href="shop_single.html?item=4"><img class="img-fluid" src="img/property-4.jpg" alt=""></a>
                                         <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">For Rent</div>
                                         <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">Building</div>
                                     </div>
                                     <div class="p-4 pb-0">
                                         <h5 class="text-primary mb-3">$15,545</h5>
-                                        <a class="d-block h5 mb-2" href="">Green Gables</a>
+                                        <a class="d-block h5 mb-2" href="shop_single.html?item=4">Green Gables</a>
                                         <p><i class="fa fa-map-marker-alt text-primary me-2"></i>123 Orchard Road, Avonlea, USA</p>
                                     </div>
                                     <div class="d-flex border-top">
@@ -404,13 +404,13 @@ if (isset($_SESSION['username'])) {
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">
-                                        <a href=""><img class="img-fluid" src="img/property-5.jpg" alt=""></a>
+                                        <a href="shop_single.html?item=5"><img class="img-fluid" src="img/property-5.jpg" alt=""></a>
                                         <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">For Sell</div>
                                         <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">Home</div>
                                     </div>
                                     <div class="p-4 pb-0">
                                         <h5 class="text-primary mb-3">$20,345</h5>
-                                        <a class="d-block h5 mb-2" href="">Graceland</a>
+                                        <a class="d-block h5 mb-2" href="shop_single.html?item=5">Graceland</a>
                                         <p><i class="fa fa-map-marker-alt text-primary me-2"></i>Elvis Presley Boulevard, Memphis, USA</p>
                                     </div>
                                     <div class="d-flex border-top">
@@ -423,13 +423,13 @@ if (isset($_SESSION['username'])) {
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">
-                                        <a href=""><img class="img-fluid" src="img/property-6.jpg" alt=""></a>
+                                        <a href="shop_single.html?item=6"><img class="img-fluid" src="img/property-6.jpg" alt=""></a>
                                         <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">For Rent</div>
                                         <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">Shop</div>
                                     </div>
                                     <div class="p-4 pb-0">
                                         <h5 class="text-primary mb-3">$17,550</h5>
-                                        <a class="d-block h5 mb-2" href="">Tara</a>
+                                        <a class="d-block h5 mb-2" href="shop_single.html?item=6">Tara</a>
                                         <p><i class="fa fa-map-marker-alt text-primary me-2"></i>Tara Plantation,Jonesboro, USA</p>
                                     </div>
                                     <div class="d-flex border-top">

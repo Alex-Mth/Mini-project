@@ -1,7 +1,17 @@
 <?php
-  include('config.php');
-  if($conn->connect_error){
-    die("connection failed: " . $conn->connect_error);}
+session_start();
+include( 'config.php');
+
+if (!isset($_SESSION['userid'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$user_id = $_SESSION['userid'];
+
+$sql = "SELECT * FROM users WHERE id = $user_id"; // Adjust your SQL query as per your database structure
+$result = $conn->query($sql);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +60,7 @@
 </div>
 <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
 <div class="text-center text-sm-left mb-2 mb-sm-0">
-<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">John Smith</h4>
+<h4 class="pt-sm-2 pb-1 mb-0 text-nowrap"><?php echo $user['username']?></h4>
 <p class="mb-0">@johnny.s</p>
 <div class="text-muted"><small>Last seen 2 hours ago</small></div>
 <div class="mt-2">

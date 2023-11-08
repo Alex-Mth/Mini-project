@@ -56,13 +56,40 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="index.html" class="nav-item nav-link">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="index.php" class="nav-item nav-link">Home</a>
+                        <a href="about.php" class="nav-item nav-link">About</a>
+                        <?php
+session_start();
+
+// Check if the user is logged in (adjust this condition based on your authentication logic)
+if (isset($_SESSION['username'])) {
+    // Display the user's username in a dropdown
+    echo '<div class="nav-item dropdown">';
+    echo '<a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' . $_SESSION['username'] . '</a>';
+    echo '<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+    echo '<a href="logout.php" class="dropdown-item">Logout</a>';
+    echo '<a href="userprofile.php" class="dropdown-item">Profile</a>';
+    echo '</div>';
+    echo '</div>';
+} else {
+    // Display the "Sign in" link
+    echo '<a href="signin.php" class="nav-item nav-link">Sign in</a>';
+}
+?>
+
+
+                            <script>
+                            function logout() {
+                                // Redirect to the logout script
+                                window.location.href = "logout.php";
+                            }
+                            </script>
+                            
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Property</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="property-list.html" class="dropdown-item">Property List</a>                               
-                                <a href="property-agent.html" class="dropdown-item">Property Agent</a>
+                                <a href="index.php#emu" class="dropdown-item">Property List</a>                               
+                                <a href="index.php#agent" class="dropdown-item">Property Agent</a>
                             </div>
                         </div>
                         <a href="contact.html" class="nav-item nav-link active">Contact</a>

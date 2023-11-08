@@ -80,17 +80,44 @@
                             <a href="index.php" class="nav-link">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a href="about.html" class="nav-link">About</a>
+                            <a href="about.php" class="nav-link">About</a>
                         </li>
+                        <?php
+session_start();
+
+// Check if the user is logged in (adjust this condition based on your authentication logic)
+if (isset($_SESSION['username'])) {
+    // Display the user's username in a dropdown
+    echo '<div class="nav-item dropdown">';
+    echo '<a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' . $_SESSION['username'] . '</a>';
+    echo '<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+    echo '<a href="logout.php" class="dropdown-item">Logout</a>';
+    echo '<a href="profile.php" class="dropdown-item">Profile</a>';
+    echo '</div>';
+    echo '</div>';
+} else {
+    // Display the "Sign in" link
+    echo '<a href="signin.php" class="nav-item nav-link">Sign in</a>';
+}
+?>
+
+
+                            <script>
+                            function logout() {
+                                // Redirect to the logout script
+                                window.location.href = "logout.php";
+                            }
+                            </script>
+                            
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Property</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="property-list.html" class="dropdown-item">Property List</a>                               
-                                <a href="property-agent.html" class="dropdown-item">Property Agent</a>
+                                <a href="index.php#emu" class="dropdown-item">Property List</a>                               
+                                <a href="index.php#agent" class="dropdown-item">Property Agent</a>
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a href="contact.html" class="nav-link">Contact</a>
+                            <a href="contact.php" class="nav-link">Contact</a>
                         </li>
                     </ul>
                     <a href="" class="btn btn-primary px-3 d-none d-lg-flex">Add Property</a>
@@ -99,14 +126,14 @@
         </div>
         <!-- Navbar End -->
 
-    <div class="bg-light py-3">
+ <div class="bg-light py-3">
       <div class="container">
         <div class="row">
           <div class="col-md-12 mb-0"><a href="index.php">Home</a> <span class="mx-2 mb-0">/</span> <a href="shop.html">Shop</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Marshall</strong></div>
         </div>
       </div>
     </div>  
-  <div id="item=1">
+    <div id="item-container-1" style="display: none;">
     <div class="site-section">
       <div class="container">
         <div class="row">
@@ -181,8 +208,7 @@
           </div>
         </div>
       </div>
-    </div>
-    <div id="item-container">
+    <div id="item-container-2" style="display: none;">
     <div class="site-section">
       <div class="container">
         <div class="row">
@@ -253,156 +279,70 @@
       </div>
     </div>
   </div>
-  <div id="item-container">
-    <div class="site-section">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6">
-            <img id="main-image" src="img/property-2.jpg" alt="Image" class="img-fluid">
-            <br><br>
-            <div class="row">
-              <div class="col-md-4">
-                  <img src="images/marshall  headphone.jpg" alt="Image 2" class="img-fluid thumb" data-src="images/marshall  headphone.jpg" style="width: 150px; height: 100px;">
-              </div>
-              <div class="col-md-4">
-                  <img src="images/motif1_sub.png" alt="Image 3" class="img-fluid thumb" data-src="images/motif1_sub.png" style="width: 150px; height: 100px;">
-              </div>
-              <div class="col-md-4">
-                  <img src="images/motif2_sub.png" alt="Image 4" class="img-fluid thumb" data-src="images/motif2_sub.png" style="width: 150px; height: 100px;">
-              </div>
-          </div>
-          </div>
-          <div class="col-md-6">
-            <h2 class="text-black">MOTIF II A.N.C</h2>
-            <p style="color: black;">Motif II A.N.C. offers huge sound, in a tiny package. Its sleek charging case packs a punch by powering your headphones with 30 hours of wireless playtime.</p>
-            <p class="mb-4" style="color: black;">Ex numquam veritatis debitis minima quo error quam eos dolorum quidem perferendis. Quos repellat dignissimos minus, eveniet nam voluptatibus molestias omnis reiciendis perspiciatis illum hic magni iste, velit aperiam quis.</p>
-            <p><strong class="text-primary h3">M.R.P ₹19,999</strong></p>
-           
-            <div class="container">
-              <p class="h3" style="color: black;">Product Specifications</p>
-              <table style="color: black; border: 1px solid black;">
-                  <tr>
-               
-                  </tr>
-                  <tr>
-                      <td style="border: 1px solid black;  text-align: center;">General</td>
-                      <td style="border: 1px solid black;  text-align: center;">Product Name: Example Product</td>
-                  </tr>
-                  <tr>
-                      <td style="border: 1px solid black;  text-align: center;"></td>
-                      <td style="border: 1px solid black;  text-align: center;">Model: ABC-123</td>
-                  </tr>
-                  <tr>
-                      <td style="border: 1px solid black;  text-align: center;">Features</td>
-                      <td style="border: 1px solid black;  text-align: center;">Screen Size: 15 inches</td>
-                  </tr>
-                  <tr>
-                      <td style="border: 1px solid black; text-align: center;"></td>
-                      <td style="border: 1px solid black;  text-align: center;">Processor: Quad-core 2.0 GHz</td>
-                  </tr>
-                  <tr>
-                      <td style="border: 1px solid black;  text-align: center;">Connectivity</td>
-                      <td style="border: 1px solid black;  text-align: center;">Wi-Fi: 802.11ac</td>
-                  </tr>
-                  <tr>
-                      <td style="border: 1px solid black;  text-align: center;"></td>
-                      <td style="border: 1px solid black;  text-align: center;">Bluetooth: 5.0</td>
-                  </tr>
-                  <tr>
-                      <td style="border: 1px solid black;  text-align: center;">Other Details</td>
-                      <td style="border: 1px solid black;  text-align: center;">Dimensions: 13.5" x 9.5" x 0.75"</td>
-                  </tr>
-                  <tr>
-                      <td style="border: 1px solid black;  text-align: center;"></td>
-                      <td style="border: 1px solid black;  text-align: center;">Weight: 3.5 lbs</td>
-                  </tr>
-              </table>
-         </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-    <div class="site-section block-3 site-blocks-2 bg-light">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-7 site-section-heading text-center pt-4">
-            <h2>Featured Products</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="nonloop-block-3 owl-carousel">
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="images/cloth_1.jpg" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Tank Top</a></h3>
-                    <p class="mb-0">Finding perfect t-shirt</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
+  <div id="item-container-3" style="display: none;">
+      <div class="site-section">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <img src="images/computer accesories.jpg" alt="Image" class="img-fluid">
+            </div>
+            <div class="col-md-6">
+              <h2 class="text-black">TP-Link 16 Port</h2>
+              <p style="color: black;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, vitae, explicabo? Incidunt facere, natus soluta dolores iusto! Molestiae expedita veritatis nesciunt doloremque sint asperiores fuga voluptas, distinctio, aperiam, ratione dolore.</p>
+              <p class="mb-4" style="color: black;">Ex numquam veritatis debitis minima quo error quam eos dolorum quidem perferendis. Quos repellat dignissimos minus, eveniet nam voluptatibus molestias omnis reiciendis perspiciatis illum hic magni iste, velit aperiam quis.</p>
+              <p><strong class="text-primary h3">M.R.P ₹9,999</strong></p>
+              <div class="mb-5">
+                <div class="input-group mb-3" style="max-width: 120px;">
+                <div class="input-group-prepend">
+                  <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                </div>
+                <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
                 </div>
               </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="images/shoe_1.jpg" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Corater</a></h3>
-                    <p class="mb-0">Finding perfect products</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
+  
               </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="images/cloth_2.jpg" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Polo Shirt</a></h3>
-                    <p class="mb-0">Finding perfect products</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="images/cloth_3.jpg" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">T-Shirt Mockup</a></h3>
-                    <p class="mb-0">Finding perfect products</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="images/shoe_1.jpg" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Corater</a></h3>
-                    <p class="mb-0">Finding perfect products</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
-              </div>
+              <p><a href="cart.html" class="buy-now btn btn-sm btn-primary">Add To Cart</a></p>
+  
             </div>
           </div>
         </div>
       </div>
+
+  <div id="item-container-4" style="display: none;">    
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <img src="images/phone.jpg" alt="Image" class="img-fluid">
+          </div>
+          <div class="col-md-6">
+            <h2 class="text-black">Lava Blaze 5G</h2>
+            <p style="color: black;">The Lava Blaze 5G 128 GB (Glass Green, 8 GB RAM) and delve into a new world of possibilities. The stylish and marvellous design of the phone attracts everyone.</p>
+            <p class="mb-4" style="color: black;">Ex numquam veritatis debitis minima quo error quam eos dolorum quidem perferendis. Quos repellat dignissimos minus, eveniet nam voluptatibus molestias omnis reiciendis perspiciatis illum hic magni iste, velit aperiam quis.</p>
+            <p><strong class="text-primary h3">M.R.P ₹13,999</strong></p>
+            <div class="mb-5">
+              <div class="input-group mb-3" style="max-width: 120px;">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+              </div>
+              <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+              <div class="input-group-append">
+                <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+              </div>
+            </div>
+
+            </div>
+            <p><a href="cart.html" class="buy-now btn btn-sm btn-primary">Add To Cart</a></p>
+
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
 
-
+    //footer start
     <footer class="site-footer border-top">
       <div class="container">
         <div class="row">
@@ -538,7 +478,7 @@
         const itemContainer = document.getElementById("item-container");
 
         const itemHTML = `
-        <div id="${itemIndex}">
+        <div id="item-container">
     <div class="site-section">
       <div class="container">
         <div class="row">
@@ -627,7 +567,7 @@
   </div>
         `;
 
-        itemIndex.innerHTML = itemHTML;
+        itemContainer.innerHTML = itemHTML;
     }
 
     // Check if "item" query parameter is provided and load the corresponding item
@@ -662,8 +602,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
 </script>
+<script>
+
+        // Function to extract query parameters from the URL
+        function getQueryParam(parameter) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(parameter);
+        }
+
+        // Check if the URL contains the 'show' parameter with the value '1' or '2'
+        var showParam = getQueryParam('show');
+        if (showParam === '1') {
+            // Show the first item container
+            document.getElementById('item-container-1').style.display = 'block';
+        } else if (showParam === '2') {
+            // Show the second item container
+            document.getElementById('item-container-2').style.display = 'block';
+        } else if (showParam === '3') {
+            // Show the second item container
+            document.getElementById('item-container-3').style.display = 'block';
+        } else if (showParam === '4') {
+            // Show the second item container
+            document.getElementById('item-container-4').style.display = 'block';
+        }       
+    </script>
 
 
     </div>

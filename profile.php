@@ -1,37 +1,42 @@
 <?php
 session_start();
 require 'config.php';
-
+$username = $_SESSION['username'];
 if (isset($_SESSION['username'])) {
-  $sql = "SELECT * FROM user WHERE username = ''" . $_SESSION['username'] . "'";
+  $sql ="SELECT * FROM user WHERE username ='$username'";
   $result = mysqli_query($conn, $sql);
 
   if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
-      $id = $row['id'];
+    
       $username = $row['username'];
-      $fname = $row['firstname'];
-      $lname = $row['lastname'];
+      $name = $row['name'];
+     
       $email = $row['email'];
       $phone = $row['phone'];
+      $address= $row['address'];
+
     }
   }
   if (isset($_POST['update'])) {
-    $fname = mysqli_real_escape_string($conn, $_POST['firstname']);
-    $lname = mysqli_real_escape_string($conn, $_POST['lastname']);
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $address = mysqli_real_escape_string($conn, $_POST['address']);
+
 
     // Update user information in the database
-    $updateQuery = "UPDATE users SET firstname = '$fname', lastname = '$lname', phone = '$phone', email = '$email' WHERE id = '$id'";
+    $updateQuery = "UPDATE user SET username = '$username', name = '$name', phone = '$phone', email = '$email' ,address='$address' WHERE username = '$username'";
     $updateResult = mysqli_query($conn, $updateQuery);
 
     if ($updateResult) {
       // Update session variables
-      $_SESSION['firstname'] = $fname;
-      $_SESSION['lastname'] = $lname;
+      $_SESSION['username'] = $username;
+      $_SESSION['name'] = $name;
       $_SESSION['phone'] = $phone;
       $_SESSION['email'] = $email;
+      $_SESSION['address']=$address;
 
       // Redirect to the profile page
       header("Location: profile.php");
@@ -470,50 +475,7 @@ if (isset($_SESSION['username'])) {
 
 <body>
 
-  <div class="site-wrap">
-    <header class="site-navbar" role="banner">
-      <div class="site-navbar-top">
-        <div class="">
-          <div class="row align-items-center">
 
-            <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left" style="padding-left: 50px;">
-              <form action="" class="site-block-top-search">
-                <span class="icon icon-search2"></span>
-                <input type="text" class="form-control border-0" placeholder="Search">
-              </form>
-            </div>
-
-            <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
-              <div class="site-logo">
-                <a href="index.php" class="js-logo-clone">
-                  <img src="images/kart.jpg" alt="Electro-KART" class="logo-image">
-                  <span class="logo-text">PRODEAL</span>
-                </a>
-              </div>
-            </div>
-
-            <div class="col-1 col-md-4 order-3 order-md-3 text-right" style="padding-right: 30px;">
-              <div class="site-top-icons">
-                <ul>
-                  <li>
-                    <a href="signin.php" class="btn btn-sm custom-button">
-                      <span class="icon"><i class="fas fa-solid fa-store"></i></span>Become a Seller
-                    </a>
-                  </li>
-
-                  <li>
-                    <a href="cart.html" class="site-cart btn btn-sm custom-button">
-                      <span class="icon icon-shopping_cart"><i class="fas"></i></span> Cart
-                      <span class="count">2</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
        <!-- Navbar Start -->
        <div class="container-fluid nav-bar bg-transparent">
             <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
@@ -531,7 +493,7 @@ if (isset($_SESSION['username'])) {
                         <a href="index.html" class="nav-item nav-link active">Home</a>
                         <a href="about.php" class="nav-item nav-link">About</a>
                         <?php
-session_start();
+
 
 // Check if the user is logged in (adjust this condition based on your authentication logic)
 if (isset($_SESSION['username'])) {
@@ -600,7 +562,7 @@ if (isset($_SESSION['username'])) {
                   <h4>
                     <?php echo $username ?>
                   </h4>
-                  <p class="text-muted font-size-sm">Bay Area, San Francisco, CA iuqberfciw2rhbefcvouwerhbvwlje</p>
+                  <?php echo $address?><br><br>
                   <button class="btn btn-outline-primary"><a href="signout.php">Logout</a></button>
                 </div>
               </div>
@@ -620,44 +582,27 @@ if (isset($_SESSION['username'])) {
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                   </svg>
-                  <a href="#" id="e">ORDERS</a>
+                  <a href="#" id="e">CART</a>
                 </h6>
                 <span class="text-secondary"></span>
               </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                <h6 class="mb-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-dollar-sign">
-                    <line x1="12" y1="1" x2="12" y2="23"></line>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                  </svg>PAYMENT</h6>
-                <span class="text-secondary"></span>
-              </li>
-
+              
             </ul>
           </div>
         </div>
         <div class="col-md-8">
           <div class="card mb-3">
             <div class="card-body">
-              <div class="row">
+            <div class="row">
                 <div class="col-sm-3">
-                  <h6 class="mb-0">First Name</h6>
+                  <h6 class="mb-0">Full Name</h6>
                 </div>
                 <div class="row-sm-9 text-secondary">
-                  <?php echo $fname ?>
+                  <?php echo $name ?>
                 </div>
               </div>
               <hr>
-              <div class="row">
-                <div class="col-sm-3">
-                  <h6 class="mb-0">Last Name</h6>
-                </div>
-                <div class="row-sm-9 text-secondary">
-                  <?php echo $lname ?>
-                </div>
-              </div>
-              <hr>
+              
               <div class="row">
                 <div class="col-sm-3">
                   <h6 class="mb-0">Email</h6>
@@ -681,7 +626,7 @@ if (isset($_SESSION['username'])) {
                   <h6 class="mb-0">Address</h6>
                 </div>
                 <div class="row-sm-9 text-secondary">
-                  Sanfransico
+                  <?php echo $address ?>
                 </div>
               </div>
               <hr>
@@ -707,12 +652,12 @@ if (isset($_SESSION['username'])) {
     <form method="post" enctype="multipart/form-data" class="row justify-content-center">
       <div class="col-md-6"> <!-- Center the form in a column (adjust the column width as needed) -->
         <div class="form-group">
-          <label for="firstname" style="color: white;">First Name</label>
-          <input type="text" class="form-control" id="firstname" name="firstname" value="<?php echo $fname ?>">
+          <label for="username" style="color: white;"> Username</label>
+          <input type="text" class="form-control" id="username" name="username" value="<?php echo $username ?>">
         </div>
         <div class="form-group">
-          <label for="lastname" style="color: white;">Last Name</label>
-          <input type="text" class="form-control" id="lastname" name="lastname" value="<?php echo $lname ?>">
+          <label for="name" style="color: white;"> Name</label>
+          <input type="text" class="form-control" id="name" name="name" value="<?php echo $name ?>">
         </div>
         <div class="form-group">
           <label for="email" style="color: white;">Email</label>
@@ -721,6 +666,10 @@ if (isset($_SESSION['username'])) {
         <div class="form-group">
           <label for="phone" style="color: white;">Phone Number</label>
           <input type="text" class="form-control" id="phone" name="phone" value="<?php echo $phone ?>">
+        </div>
+        <div class="form-group">
+          <label for="address" style="color: white;"><Address>Address</label>
+          <input type="text" class="form-control" id="address" name="address" value="<?php echo $address ?>">
         </div>
         <button type="submit" class="btn btn-outline-primary" name="update">Update</button>
       </div>

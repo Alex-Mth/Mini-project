@@ -9,11 +9,11 @@ if ($conn->connect_error) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if form was submitted
-    $email = $_POST['email'];
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
     // SQL query to check if the user exists with the given email and password
-    $sql = "SELECT * FROM user WHERE email='$email' AND password='$password'";
+    $sql = "SELECT * FROM user WHERE username='$username' AND password='$password'";
 
     $result = $conn->query($sql);
 
@@ -83,8 +83,8 @@ $conn->close();
                 <h2 class="form-title">Sign In</h2>
                 <form method="POST" class="register-form" id="login-form">
                     <div class="form-group">
-                        <label for="email"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                        <input type="text" name="email" id="email" placeholder="Your Email"/>
+                        <label for="username"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                        <input type="text" name="username" id="username" placeholder="Your username"/>
                     </div>
                     <div class="form-group">
                         <label for="password"><i class="zmdi zmdi-lock"></i></label>

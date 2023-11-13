@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = $_POST['phone'];
     $password = $_POST['pass'];
     $confirm_password = $_POST['re_pass'];
+    $address=$_POST['address'];
 
     // Debugging: Output form data
     //echo "Name: " . $name . "<br>";
@@ -18,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //echo "Confirm Password: " . $confirm_password . "<br>";
 
     // Validate form data (check for empty fields)
-    if (empty($uname)||empty($name) || empty($email) || empty($phone) || empty($password) || empty($confirm_password)) {
+    if (empty($uname)||empty($name) || empty($email) || empty($phone) || empty($password) || empty($confirm_password) ||  empty($address))  {
         echo "All fields are required.";
     } else {
-        $sql = "INSERT INTO user (username,name, email, phone, password) VALUES ('$uname','$name', '$email', '$phone', '$password')";
+        $sql = "INSERT INTO user (username,name, email, phone, password,address) VALUES ('$uname','$name', '$email', '$phone', '$password','$address')";
 
         if ($conn->query($sql) === TRUE) {
             echo "Record created successfully";
@@ -81,14 +82,20 @@ $conn->close();
     <div class="form-group">
         <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
         <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password" required />
+</div>
+<div class="form-group">
+        <label for="email"><i class="zmdi zmdi-email"></i></label>
+        <textarea name="address" id="address" placeholder="address" required ></textarea>
     </div>
     <div class="form-group">
         <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" required />
         <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in <a href="#" class="term-service">Terms of service</a></label>
     </div>
+    
     <div class="form-group form-button">
         <input type="submit" name="signup" id="signup" class="form-submit" value="Register" />
     </div>
+    
 </form>
 
                     </div>

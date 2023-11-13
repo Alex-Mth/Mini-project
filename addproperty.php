@@ -9,137 +9,192 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bathroom = $_POST['bathrooms'];
     $floor = $_POST['floor'];
     $roof = $_POST['roof'];
-    $age=$_POST['age'];
-    $condition=$_POST['condition'];
-    $btype=$_POST['building_type'];
-    
-
-    // Debugging: Output form data
-    //echo "Name: " . $name . "<br>";
-    //echo "Email: " . $email . "<br>";
-    //echo "Phone: " . $phone . "<br>";
-    //echo "Password: " . $password . "<br>";
-    //echo "Confirm Password: " . $confirm_password . "<br>";
+    $age = $_POST['age'];
+    $condition = $_POST['condition'];
+    $btype = $_POST['building_type'];
 
     // Validate form data (check for empty fields)
-    if (empty($area)||empty($desc) || empty($bedroom) || empty($bathroom) || empty($floor) || empty($roof) ||  empty($age)||  empty($condition)||  empty($btype))  {
+    if (empty($area) || empty($desc) || empty($bedroom) || empty($bathroom) || empty($floor) || empty($roof) || empty($age) || empty($condition) || empty($btype)) {
         echo "All fields are required.";
     } else {
-        $sql = "INSERT INTO building (areainsqft,description,bedrooms,bathrooms,floor,roof,age,condition,building_type) VALUES ('$area','$desc', '$bedroom', '$bathroom', '$floor','$roof','$age,'$condition','$btype')";
+        // Insert property details into the database
+        $sql = "INSERT INTO building (areainsqft, description, bedrooms, bathrooms, floor, roof, age, `condition`, building_type) VALUES ('$area', '$desc', '$bedroom', '$bathroom', '$floor', '$roof', '$age', '$condition', '$btype')";
 
-        if ($conn->query($sql) === TRUE) {
-            echo "Record created successfully";
-        } else {
+        if ($conn->query($sql) !== TRUE) {
             echo "Error: " . $sql . "<br>" . $conn->error;
         }
+            if (isset($_FILES['image'])) {
+                foreach ($_FILES['image']['tmp_name'] as $key => $tmp_name) {
+                    $file_name = $_FILES['image']['name'][$key];
+                    $targetFilePath = $file_name;
+                    move_uploaded_file($tmp_name, $targetFilePath);
+                    $imageData = file_get_contents($targetFilePath);
+                    $escapedImageData = $conn->real_escape_string($imageData);
+
+                    // Insert image data into the database with the associated property ID
+                    $imageSql = "INSERT INTO building_images (bid, image) VALUES ('$propertyId', '$escapedImageData')";
+                    if ($conn->query($imageSql) !== TRUE) {
+                        echo "Error: " . $imageSql . "<br>" . $conn->error;
+                    }
+                }
+            }
+
+            echo "Property and images uploaded successfully.";
+        }
     }
-}
-$conn->close();
+    $conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sign Up Form by Colorlib</title>
+    <title>Insert Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
 
-    <!-- Font Icon -->
-    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+        h1 {
+            color: #333;
+        }
 
-    <!-- Main css -->
-    <link rel="stylesheet" href="css/login.css">
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        form input,
+        form textarea,
+        form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        ul li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            border: 1px solid #888;
+            width: 200px;
+            /* Set the width of the modal */
+            height: 200px;
+            /* Set the height of the modal */
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .close {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .close:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
+
 <body>
+    <h1>
+        <center>Add Property</center>
+    </h1><br>
+    <form action="" method="post" enctype="multipart/form-data">
+        <label for="areainsqft">Area in Square Feet</label>
+        <input type="text" name="areainsqft" id="areainsqft" placeholder="Eg: 2200 SQFT" required><br><br>
 
-    <div class="main">
+        <label for="bathrooms">No of Bathrooms: </label>
+        <input name="bathrooms" id="bathrooms" required></input><br><br>
 
-        <!-- Sign up form -->
-        <section class="signup">
-            <div class="container">
-                <div class="signup-content">
-                    <div class="signup-form">
-                        <h2 class="form-title">Add Property</h2>
-                        <form method="POST" class="register-form" id="register-form">
-    <div class="form-group">
-        <label for="areainsqft"><i class="zmdi zmdi-account material-icons-name"></i></label>
-        <input type="text" name="areainsqft" id="areainsqft" placeholder=" AREA IN SQUARE FEAT" required />
-    </div>
-    <div class="form-group">
-        <label for="bathrooms"><i class="zmdi zmdi-account material-icons-name"></i></label>
-        <input type="number" name="bathrooms" id="bathrooms" placeholder="number of bathrooms" required />
-    </div>
-    <div class="form-group">
-        <label for="bedrooms"><i class="zmdi zmdi-email"></i></label>
-        <input type="number" name="bedrooms" id="bedrooms" placeholder="number of bedrooms" required />
-    </div>
-    <div class="form-group">
-        <label for="floor"><i class="zmdi zmdi-phone"></i></label>
-        <input type="number" name="floor" id="floor" placeholder="number of floor" required />
-    </div>
-    <div class="form-group">
-        <label for="roof"><i class="zmdi zmdi-lock"></i></label>
-        <input type="text" name="roof" id="roof" placeholder="roofing type" required />
-    </div>
-    <div class="form-group">
-        <label for="age"><i class="zmdi zmdi-lock-outline"></i></label>
-        <input type="number" name="age" id="age" placeholder="age" required />
-</div>
-<div class="form-group">
-        <label for="condition"><i class="zmdi zmdi-lock-outline"></i></label>
-        <input type="varchar" name="condition" id="condition" placeholder="condition of your building" required />
-</div>
+        <label for="bedrooms">No of Bedrooms</label>
+        <input type="number" name="bedrooms" id="bedrooms" required><br><br>
 
+        <label for="floor">No of Floors</label>
+        <input type="number" name="floor" id="floor" required><br><br>
 
+        <label for="roof">Roofing Type</label>
+        <input type="text" name="roof" id="roof" required><br><br>
 
-<div class="form-group">
-<div class="form-check">
-<div style="display:flex; align-items: center;flex-direction: row;">
-    <p style="margin:0px;">appartment</p>
-    <input style="width:15px;" class="form-check-input" type="radio" name="building_type" id="building_type" value="apartment">
-</div>
-<div style="display:flex; align-items: center;flex-direction: row;">
-    <p style="margin:0px;">villa</p>
-    <input style="width:15px;" class="form-check-input" type="radio" name="building_type" id="building_type" value="villa">   
-</div>
+        <label for="age">Age of the Building</label>
+        <input type="text" name="age" id="age" required><br><br>
 
-<div style="display:flex; align-items: center;flex-direction: row;">
-    <p style="margin:0px;">home</p>
-    <input style="width:15px;" class="form-check-input" type="radio" name="building_type" id="building_type" value="home">  
-</div>
-<div style="display:flex; align-items: center;flex-direction: row;">
-    <p style="margin:0px;">shop</p>
-    <input style="width:15px;"  class="form-check-input" type="radio" name="building_type" id="building_type" value="shop">  
-</div>
-</div>
-</div>
-<div class="form-group">
-        <label for="description"><i class="zmdi zmdi-email"></i></label>
-        <textarea name="description" id="description" placeholder="description" required ></textarea>
-    </div>
-    <div class="form-group">
-        <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" required />
-        <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in <a href="#" class="term-service">Terms of service</a></label>
-    </div>
-    
-    <div class="form-group form-button">
-        <input type="submit" name="signup" id="signup" class="form-submit" value="Register" />
-    </div>
-    
-</form>
+        <label for="condition">Condition of the Building</label>
+        <input type="text" name="condition" id="condition" required>
+        <br><br>
 
-                    </div>
-                    <div class="signup-image">
-                        <figure><img src="img/signup-image.jpg" alt="sing up image"></figure>
-                        <a href="signin.php" class="signup-image-link">I am already member</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <label for="building_type">Building Type</label>
+        <select name="building_type" id="building_type" required>
+            <option value="" disabled selected>Select a category</option>
+            <option value="apartment">Apartment</option>
+            <option value="villa">Villa</option>
+            <option value="house">House</option>
+            <option value="shop">Shop</option>
+        </select>
+        <br><br>
 
-    <!-- JS -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="js/login.js"></script>
+        <label for="brand">Description:</label>
+        <textarea type="text" name="description" id="description" required></textarea>
+        <br><br>
+
+        <label for="product_images">Images:</label>
+        <input type="file" name="image[]" id="image" accept="image/*" multiple><br><br>
+
+        <input type="submit" value="Add Property">
+    </form>
+
 </body>
+
 </html>

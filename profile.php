@@ -3,7 +3,7 @@ session_start();
 require 'config.php';
 
 if (isset($_SESSION['username'])) {
-  $sql = "SELECT * FROM users WHERE username = '" . $_SESSION['username'] . "'";
+  $sql = "SELECT * FROM user WHERE username = ''" . $_SESSION['username'] . "'";
   $result = mysqli_query($conn, $sql);
 
   if (mysqli_num_rows($result) > 0) {
@@ -487,7 +487,7 @@ if (isset($_SESSION['username'])) {
               <div class="site-logo">
                 <a href="index.php" class="js-logo-clone">
                   <img src="images/kart.jpg" alt="Electro-KART" class="logo-image">
-                  <span class="logo-text">Electro-Kart</span>
+                  <span class="logo-text">PRODEAL</span>
                 </a>
               </div>
             </div>
@@ -514,22 +514,66 @@ if (isset($_SESSION['username'])) {
           </div>
         </div>
       </div>
-      <nav class="site-navigation text-right text-md-center" role="navigation">
-        <div class="container">
-          <ul class="site-menu js-clone-nav d-none d-md-block">
-            <li class="">
-              <a href="index.php">Home</a>
-            </li>
-            <li class="">
-              <a href="about.html">About</a>
-            </li>
-            <li class="">
-              <a href="shop.html">Shop</a>
-            </li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
+       <!-- Navbar Start -->
+       <div class="container-fluid nav-bar bg-transparent">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
+                <a href="index.html" class="navbar-brand d-flex align-items-center text-center">
+                    <div class="icon p-2 me-2">
+                        <img class="img-fluid" src="img/icon-deal.png" alt="Icon" style="width: 30px; height: 30px;">
+                    </div>
+                    <h1 class="m-0 text-primary">PRODEAL</h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto">
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="about.php" class="nav-item nav-link">About</a>
+                        <?php
+session_start();
+
+// Check if the user is logged in (adjust this condition based on your authentication logic)
+if (isset($_SESSION['username'])) {
+    // Display the user's username in a dropdown
+    echo '<div class="nav-item dropdown">';
+    echo '<a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' . $_SESSION['username'] . '</a>';
+    echo '<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+    echo '<a href="logout.php" class="dropdown-item">Logout</a>';
+    echo '<a href="profile.php" class="dropdown-item">Profile</a>';
+    echo '</div>';
+    echo '</div>';
+} else {
+    // Display the "Sign in" link
+    echo '<a href="signin.php" class="nav-item nav-link">Sign in</a>';
+}
+?>
+
+
+                            <script>
+                            function logout() {
+                                // Redirect to the logout script
+                                window.location.href = "logout.php";
+                            }
+                            </script>
+                            
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Property</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="#emu" class="dropdown-item">Property List</a>
+                                <a href="#agent" class="dropdown-item">Property Agent</a>
+                            </div>
+                        </div>
+                        <a href="contact.php" class="nav-item nav-link">Contact</a>
+                    </div>
+                    <a href="" class="btn btn-primary px-3 d-none d-lg-flex">Add Property</a>
+                </div>
+            </nav>
         </div>
-      </nav>
+        <!-- Navbar End -->
+
+
+        <!-- Header Start -->
     </header>
 
     <div class="bg-light py-3">

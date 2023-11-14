@@ -563,7 +563,7 @@ if (isset($_SESSION['username'])) {
                     <?php echo $username ?>
                   </h4>
                   <?php echo $address?><br><br>
-                  <button class="btn btn-outline-primary"><a href="signout.php">Logout</a></button>
+                  <button class="btn btn-outline-primary"><a href="logout.php">Logout</a></button>
                 </div>
               </div>
             </div>

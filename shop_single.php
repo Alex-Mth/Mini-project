@@ -135,6 +135,7 @@
                         <div class='mb-5'>
                             <div class='input-group mb-3' style='max-width: 120px;'></div>
                         </div>
+                        <a class='btn btn-primary py-3 px-4 mt-3' href='booking.php'>Booking</a>
                         <div class='container'>
                             <p class='h3' style='color: black;'>Product Specifications</p>
                             <table style='color: black; border: 1px solid black;'>

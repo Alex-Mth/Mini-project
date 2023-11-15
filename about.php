@@ -57,7 +57,8 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto">
                         <a href="index.php" class="nav-item nav-link">Home</a>
-                        <a href="about.html" class="nav-item nav-link active">About</a>
+                        <a href="about.php" class="nav-item nav-link active">About</a>
+                        <a href="shop.php" class="nav-item nav-link">Shop</a>
                         <?php
 session_start();
 
@@ -107,15 +108,14 @@ if (isset($_SESSION['username'])) {
                 <div class="col-md-6 p-5 mt-lg-5">
                     <div>
 
-
                     </div>
                     <h1 class="display-5 animated fadeIn mb-4"><br>
                         About Us</h1> 
-                        <nav aria-label="breadcrumb animated fadeIn">
                         <ol class="breadcrumb text-uppercase">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                             <li class="breadcrumb-item text-body active" aria-current="page">About</li>
+                        </ol>
+                        <nav aria-label="breadcrumb animated fadeIn">
                             <p>
                                 At ProDeal, we're transforming real estate transactions by connecting buyers and sellers directly, cutting out excessive broker fees, and simplifying the entire process. Our user-friendly platform empowers you to discover, negotiate, and close deals effortlessly. Join us today for a transparent, cost-effective, and hassle-free real estate experience.</p>
 
@@ -168,28 +168,7 @@ if (isset($_SESSION['username'])) {
         <!-- Search End -->
 
 
-        <!-- About Start -->
-        <div class="container-xxl py-5">
-            <div class="container">
-                <div class="row g-5 align-items-center">
-                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
-                        <div class="about-img position-relative overflow-hidden p-5 pe-0">
-                            <img class="img-fluid w-100" src="img/about.jpg">
-                        </div>
-                    </div>
-                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                        <h1 class="mb-4">#1 Place To Find The Perfect Property</h1>
-                        <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>Tempor erat elitr rebum at clita</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>Aliqu diam amet diam et eos</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>Clita duo justo magna dolore erat amet</p>
-                        <a class="btn btn-primary py-3 px-5 mt-3" href="">Read More</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- About End -->
-
+       
 
         <!-- Call to Action Start -->
         <div class="container-xxl py-5">
@@ -203,7 +182,7 @@ if (isset($_SESSION['username'])) {
                             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                                 <div class="mb-4">
                                     <h1 class="mb-3">Contact With Our Certified Agent</h1>
-                                    <p>Eirmod sed ipsum dolor sit rebum magna erat. Tempor lorem kasd vero ipsum sit sit diam justo sed vero dolor duo.</p>
+                                  
                                 </div>
                                 <a href="" class="btn btn-primary py-3 px-4 me-2"><i class="fa fa-phone-alt me-2"></i>Make A Call</a>
                                 <a href="" class="btn btn-dark py-3 px-4"><i class="fa fa-calendar-alt me-2"></i>Get Appoinment</a>
@@ -229,9 +208,9 @@ if (isset($_SESSION['username'])) {
                             <div class="position-relative">
                                 <img class="img-fluid" src="img/abhijith.jpg" alt="">
                                 <div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/profile.php?id=61553145405536&mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
                                     <a class="btn btn-square mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://instagram.com/a.bhi_jith?igshid=MXA5NWtpbnRrOGU1bg=="><i class="fab fa-instagram"></i></a>
                                 </div>
                             </div>
                             <div class="text-center p-4 mt-3">
@@ -245,9 +224,9 @@ if (isset($_SESSION['username'])) {
                             <div class="position-relative">
                                 <img class="img-fluid" src="img/alex.jpg" alt="">
                                 <div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/alex.mathew.98499123?mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
                                     <a class="btn btn-square mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://instagram.com/_.alex._mathew_?igshid=OG84YXRkeXQwYnp5"><i class="fab fa-instagram"></i></a>
                                 </div>
                             </div>
                             <div class="text-center p-4 mt-3">
@@ -261,9 +240,9 @@ if (isset($_SESSION['username'])) {
                             <div class="position-relative">
                                 <img class="img-fluid" src="img/akhil.jpg" alt="">
                                 <div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/akhildavid.oz?mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
                                     <a class="btn btn-square mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://instagram.com/akhil_._david?igshid=MTFyemFoN2pvb2puNg=="><i class="fab fa-instagram"></i></a>
                                 </div>
                             </div>
                             <div class="text-center p-4 mt-3">

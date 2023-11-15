@@ -76,9 +76,9 @@ include 'config.php';
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="index.php" class="nav-item nav-link">Home</a>
                         <a href="about.php" class="nav-item nav-link">About</a>
-                        <a href="shop.php" class="nav-item nav-link">Shop</a>
+                        <a href="shop.php" class="nav-item nav-link active">Shop</a>
                         <?php
                         session_start();
 
@@ -108,9 +108,6 @@ include 'config.php';
 
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Property</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="#agent" class="dropdown-item">Property Agent</a>
-                            </div>
                         </div>
                         <a href="contact.php" class="nav-item nav-link">Contact</a>
                     </div>
@@ -121,35 +118,8 @@ include 'config.php';
         <!-- Navbar End -->
 
 
-        <!-- Header Start -->
-        <div class="container-fluid header bg-white p-0">
-            <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
-                <div class="col-md-6 p-5 mt-lg-5">
-                    <h1 class="display-5 animated fadeIn mb-4">Find A <span class="text-primary">Perfect Home</span> To
-                        Live With Your Family</h1>
-                    <p class="animated fadeIn mb-4 pb-2">we believe that real estate is more than just a transaction.
-                        It’s a life-changing experience that requires trust, expertise, and passion.</p>
-                    <a href="#prop" class="btn btn-primary py-3 px-5 me-3 animated fadeIn">Get Started</a>
-                </div>
-                <div class="col-md-6 animated fadeIn">
-                    <div class="owl-carousel header-carousel">
-                        <div class="owl-carousel-item">
-                            <img class="img-fluid" src="img/carousel-1.jpg" alt="">
-                        </div>
-                        <div class="owl-carousel-item">
-                            <img class="img-fluid" src="img/carousel-2.jpg" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Header End -->
-
-
-
-
-        <!-- Category Start -->
-        <div class="container-xxl py-5">
+       <!-- Category Start -->
+       <div class="container-xxl py-5">
             <div class="container" id="prop">
                 <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
                     <h1 class="mb-3">Property Types</h1>
@@ -206,31 +176,7 @@ include 'config.php';
         </div>
         <!-- Category End -->
 
-
-        <!-- About Start -->
-        <div class="container-xxl py-5">
-            <div class="container">
-                <div class="row g-5 align-items-center">
-                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
-                        <div class="about-img position-relative overflow-hidden p-5 pe-0">
-                            <img class="img-fluid w-100" src="img/about.jpg">
-                        </div>
-                    </div>
-                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                        <h1 class="mb-4">#1 Place To Find The Perfect Property</h1>
-                        <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet
-                            diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna
-                            dolore erat amet</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>Tempor erat elitr rebum at clita</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>Aliqu diam amet diam et eos</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>Clita duo justo magna dolore erat amet</p>
-                        <a class="btn btn-primary py-3 px-5 mt-3" href="">Read More</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- About End -->
-
+        
 
         <!-- Property List Start -->
         <div class="container" id="emu">
@@ -265,7 +211,7 @@ include 'config.php';
                 <div class='property-item rounded overflow-hidden'>
                     <div class='position-relative overflow-hidden'>
                         <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
-                      
+                        <div class='bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3'>For Sell</div>
                         <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
                     </div>
                     <div class='p-4 pb-0'>
@@ -295,154 +241,10 @@ include 'config.php';
 
 
 
-        <!-- Call to Action Start -->
-        <div class="container-xxl py-5">
-            <div class="container">
-                <div class="bg-light rounded p-3">
-                    <div class="bg-white rounded p-4" style="border: 1px dashed rgba(0, 185, 142, .3)">
-                        <div class="row g-5 align-items-center">
-                            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
-                                <img class="img-fluid rounded w-100" src="img/call-to-action.jpg" alt="">
-                            </div>
-                            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                                <div class="mb-4">
-                                    <h1 class="mb-3">Contact With Our Certified Agent</h1>
-                                   
-                                </div>
-                                <a href="" class="btn btn-primary py-3 px-4 me-2"><i
-                                        class="fa fa-phone-alt me-2"></i>Make A Call</a>
-                                <a href="" class="btn btn-dark py-3 px-4"><i class="fa fa-calendar-alt me-2"></i>Get
-                                    Appoinment</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Call to Action End -->
 
 
-        <!-- Team Start -->
-        <div class="container-xxl py-5">
-            <div class="container" id="agent">
-                <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h1 class="mb-3">Property Agents</h1>
-                    <p>Professionals who help clients buy, sell, or rent properties, responsible for creating property
-                        listings that accurately describe the features and benefits of a property.</p>
-                </div>
-                <div class="row g-4 justify-content-center">
-                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="team-item rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="img/abhijith.jpg" alt="">
-                                <div
-                                    class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/profile.php?id=61553145405536&mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-square mx-1" href="https://instagram.com/a.bhi_jith?igshid=MXA5NWtpbnRrOGU1bg=="><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="text-center p-4 mt-3">
-                                <h5 class="fw-bold mb-0">Abhijith Ajithkumar</h5>
-                                <small>Founder</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                        <div class="team-item rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="img/alex.jpg" alt="">
-                                <div
-                                    class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/alex.mathew.98499123?mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-square mx-1" href="https://instagram.com/_.alex._mathew_?igshid=OG84YXRkeXQwYnp5"><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="text-center p-4 mt-3">
-                                <h5 class="fw-bold mb-0">Alex Mathew</h5>
-                                <small>Founder</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                        <div class="team-item rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="img/akhil.jpg" alt="">
-                                <div
-                                    class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
-                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/akhildavid.oz?mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-square mx-1" href="https://instagram.com/akhil_._david?igshid=MTFyemFoN2pvb2puNg=="><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="text-center p-4 mt-3">
-                                <h5 class="fw-bold mb-0">Akhil David</h5>
-                                <small>Founder</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Team End -->
-
-
-        <!-- Testimonial Start -->
-        <div class="container-xxl py-5">
-            <div class="container">
-                <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h1 class="mb-3">Our Clients Say!</h1>
-                   
-                </div>
-                <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>"Thrilled with the seamless experience on the prodeal! User-friendly interface, extensive listings, and prompt support. Found my dream property effortlessly. Highly recommend for hassle-free transactions!"</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="img/testimonial-1.jpg"
-                                    style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">Mathew John</h6>
-                                    <small>Doctor</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>"I found my dream property on the land dealing website! The user-friendly interface made browsing easy, and the detailed listings provided all the information I needed. Highly recommend!"</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="img/testimonial-2.jpg"
-                                    style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">David Mosses</h6>
-                                    <small>Engineer</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>"Fantastic experience using the land dealing website. Found the perfect plot quickly with detailed info. Smooth transaction and excellent customer service. A reliable platform for hassle-free land deals. Impressed!"</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="img/testimonial-3.jpg"
-                                    style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">Ajith Raj</h6>
-                                    <small>Graphic Designer</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Testimonial End -->
-
-
-        <!-- Footer Start -->
-        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+         <!-- Footer Start -->
+         <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
             <div class="container py-5">
                 <div class="row g-5">
                     <div class="col-lg-3 col-md-6">
@@ -521,17 +323,6 @@ include 'config.php';
     <script src="js/main.js"></script>
 
     <script>
-        document.querySelectorAll('a[href^="#prop"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-    </script>
-    <script>
         // JavaScript to handle the "Browse More Property" button click event
         var showHiddenItemsButton = document.getElementById("showHiddenItems");
         var hiddenItems = document.getElementById("hiddenItems");
@@ -542,23 +333,8 @@ include 'config.php';
             hiddenItems.style.display = "";
         });
     </script>
-    // search script
-    <script>
-        function searchProperties() {
-            var searchInput = document.getElementById('searchInput').value.toLowerCase();
-            var properties = document.getElementsByClassName('property');
 
-            for (var i = 0; i < properties.length; i++) {
-                var propertyName = properties[i].getAttribute('data-name').toLowerCase();
 
-                if (propertyName.includes(searchInput)) {
-                    properties[i].classList.remove('hidden');
-                } else {
-                    properties[i].classList.add('hidden');
-                }
-            }
-        }
-    </script>
-</body>
+    </body>
 
 </html>

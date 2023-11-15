@@ -58,6 +58,7 @@
                     <div class="navbar-nav ms-auto">
                         <a href="index.php" class="nav-item nav-link">Home</a>
                         <a href="about.php" class="nav-item nav-link">About</a>
+                        <a href="shop.php" class="nav-item nav-link">Shop</a>
                         <?php
 session_start();
 

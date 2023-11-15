@@ -93,7 +93,9 @@ $conn->close();
     </div>
     
     <div class="form-group form-button">
+    <a herf="signup.php">
         <input type="submit" name="signup" id="signup" class="form-submit" value="Register" />
+</a>
     </div>
     
 </form>

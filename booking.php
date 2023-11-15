@@ -7,30 +7,40 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
+// Check if property ID is already in the session
+$propertyId = isset($_SESSION['bid']) ? $_SESSION['bid'] : null;
+
+// If property ID is not set, retrieve it based on some condition (e.g., username)
+if (!$propertyId && isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+
+    // Query to get property ID based on the username (you might need to adjust this query)
+    $query = "SELECT bid FROM building WHERE username = '$username'";
+    $result = $conn->query($query);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $propertyId = $row['bid'];
+
+        // Set property ID in the session
+        $_SESSION['bid'] = $propertyId;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if form was submitted
-    $booking_date = $_POST['booking_date'];
     $end_date = $_POST['end_date'];
 
     // Validate form data (check for empty fields)
-    if (empty($booking_date) || empty($end_date)) {
+    if (empty($end_date)) {
         echo "All fields are required.";
     } else {
-        // Insert property details into the database
-        $sql = "INSERT INTO building (areainsqft, description, bedrooms, bathrooms, floor, roof, age, price, `condition`, building_type, address, city, state) VALUES ('$area', '$desc', '$bedroom', '$bathroom', '$floor', '$roof', '$age', '$price', '$condition', '$btype', '$address', '$city', '$state')";
-
-        if ($conn->query($sql) !== TRUE) {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        } else {
-            // Get the last inserted property ID
-            $propertyId = $conn->insert_id;
-
-            // Set property ID in session
-            $_SESSION['bid'] = $propertyId;
-
+        if ($propertyId) {
             // Insert booking details into the database
             $username = $_SESSION['username'];
-            $bookingSql = "INSERT INTO booking (bid, booking_date, end_date, username) VALUES ('$propertyId', '$booking_date', '$end_date', '$username')";
+            $bookingSql = "INSERT INTO booking (bid, end_date, username) VALUES ('$propertyId', '$end_date', '$username')";
+
+            echo "SQL Query: $bookingSql<br>";
 
             if ($conn->query($bookingSql) !== TRUE) {
                 echo "Error: " . $bookingSql . "<br>" . $conn->error;
@@ -42,11 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: ' . $_SERVER['PHP_SELF']);
                 exit;
             }
+        } else {
+            echo "Error: Invalid property ID.";
         }
     }
 }
 
 $conn->close();
+
+
 
 if (isset($_SESSION['success_message'])) {
     echo "<div id='myModal' class='modal'>
@@ -112,7 +126,6 @@ if (isset($_SESSION['success_message'])) {
 
     <div class="main">
 
-
 <!-- Sign in  Form -->
 <section class="sign-in">
     <div class="container">
@@ -125,17 +138,15 @@ if (isset($_SESSION['success_message'])) {
                 <h2 class="form-title">Booking Details</h2>
                 <form method="POST" class="register-form" id="login-form">
                     <div class="form-group">
-                        <label for="booking_date"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                        <input type="date" name="booking_date" id="booking_date" placeholder="Date of Booking "/>
-                    </div>
-                    <div class="form-group">
                         <label for="end_date"><i class="zmdi zmdi-lock"></i></label>
                         <input type="date" name="end_date" id="end_date" placeholder="Expire date of booking"/>
                     </div>
                     <div class="form-group form-button">
-                        <input type="submit" name="booking details" id="booking details" class="form-submit" value="booking details"/>
+                        <input type="submit" name="booking_now" id="booking_now" class="form-submit" value="Book Now"/>
                     </div>
-                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </section>
 

@@ -10,9 +10,7 @@ $propertyQuery = "SELECT * FROM building";
 $propertyResult = $conn->query($propertyQuery);
 
 // Fetch booking details (previously Sale Details)
-$bookingQuery = "SELECT booking.*, users.username as user_name, building.building_type FROM bookings
-                JOIN users ON booking.user_id = users.id
-                JOIN building ON booking.bid = building.id";
+$bookingQuery = "SELECT * from booking";
 $bookingResult = $conn->query($bookingQuery);
 ?>
 <!DOCTYPE html>

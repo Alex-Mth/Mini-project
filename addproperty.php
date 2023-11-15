@@ -1,6 +1,11 @@
 <?php
-session_start(); // Start the session
+session_start();
 include 'config.php';
+
+if (!isset($_SESSION['username'])) {
+    header('Location: signin.php');
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if form was submitted
@@ -11,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $floor = $_POST['floor'];
     $roof = $_POST['roof'];
     $age = $_POST['age'];
-    $price=$_POST['price'];
+    $price = $_POST['price'];
     $condition = $_POST['condition'];
     $btype = $_POST['building_type'];
     $address = $_POST['address'];
@@ -23,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "All fields are required.";
     } else {
         // Insert property details into the database
-        $sql = "INSERT INTO building (areainsqft, description, bedrooms, bathrooms, floor, roof, age, price, `condition`, building_type,address,city,state) VALUES ('$area', '$desc', '$bedroom', '$bathroom', '$floor', '$roof', '$age', '$price', '$condition', '$btype' ,'$address' , '$city' , '$state')";
+        $sql = "INSERT INTO building (areainsqft, description, bedrooms, bathrooms, floor, roof, age, price, `condition`, building_type, address, city, state) VALUES ('$area', '$desc', '$bedroom', '$bathroom', '$floor', '$roof', '$age', '$price', '$condition', '$btype', '$address', '$city', '$state')";
 
         if ($conn->query($sql) !== TRUE) {
             echo "Error: " . $sql . "<br>" . $conn->error;
@@ -68,7 +73,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $conn->query("UPDATE building_images SET image3 = '$targetFilePath' WHERE bid = '$propertyId'");
             }
 
-            // Set success message in session
+            $token_amount = $_POST['token_amount'];
+            if (!empty($token_amount)) {
+                // Insert token amount into the 'booking' table
+                $username = $_SESSION['username']; // Assuming username is stored in the session
+                $bookingSql = "INSERT INTO booking (bid, token_amount, username) VALUES ('$propertyId', '$token_amount', '$username')";
+
+                if ($conn->query($bookingSql) !== TRUE) {
+                    echo "Error: " . $bookingSql . "<br>" . $conn->error;
+                } else {
+                    // Set success message in session
+                    $_SESSION['success_message'] = "Token amount added successfully.";
+                }
+            } else {
+                echo "Token amount is required.";
+            }
+
+            // Set success message for property and images
             $_SESSION['success_message'] = "Property and images uploaded successfully.";
 
             // Redirect to the same page after successful form submission
@@ -76,8 +97,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
-    $conn->close();
 }
+
+$conn->close();
+
 
 if (isset($_SESSION['success_message'])) {
     echo "<div id='myModal' class='modal'>
@@ -260,6 +283,10 @@ if (isset($_SESSION['success_message'])) {
             <option value="house">House</option>
             <option value="shop">Shop</option>
         </select>
+        <br><br>
+
+        <label for="token_amount">Token Amount for this Property</label>
+        <input type="number" name="token_amount" id="token_amount" required>
         <br><br>
 
         <label for="address">address:</label>

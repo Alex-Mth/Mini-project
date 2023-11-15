@@ -582,7 +582,28 @@ if (isset($_SESSION['username'])) {
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                   </svg>
-                  <a href="#" id="e">CART</a>
+                  <a href="#" id="e">ORDER</a>
+                </h6>
+                <span class="text-secondary"></span>
+              </li>
+              
+            </ul>
+          </div>
+          <div class="card mt-3">
+            <ul class="list-group list-group-flush" id="y">
+              <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                <h6 class="mb-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-package">
+                    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                    <path
+                      d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                    </path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                  <a href="#" id="e">PROPERTY</a>
                 </h6>
                 <span class="text-secondary"></span>
               </li>

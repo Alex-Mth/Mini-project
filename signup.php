@@ -1,6 +1,9 @@
 <?php
 include 'config.php';
 
+// Start the session at the beginning
+session_start();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if form was submitted
     $uname = $_POST['uname'];
@@ -9,17 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = $_POST['phone'];
     $password = $_POST['pass'];
     $confirm_password = $_POST['re_pass'];
-    $address = $_POST['address'];
+    $address=$_POST['address'];
 
     // Validate form data (check for empty fields)
-    if (empty($uname) || empty($name) || empty($email) || empty($phone) || empty($password) || empty($confirm_password) || empty($address)) {
+    if (empty($uname)||empty($name) || empty($email) || empty($phone) || empty($password) || empty($confirm_password) ||  empty($address))  {
         echo "All fields are required.";
     } else {
-        $sql = "INSERT INTO user (username, name, email, phone, password, address) VALUES ('$uname', '$name', '$email', '$phone', '$password', '$address')";
+        $sql = "INSERT INTO user (username,name, email, phone, password,address) VALUES ('$uname','$name', '$email', '$phone', '$password','$address')";
 
         if ($conn->query($sql) === TRUE) {
-            // Redirect to the same page to avoid form resubmission
-            header("Location: {$_SERVER['PHP_SELF']}");
+            // Data inserted successfully, set a session variable
+            $_SESSION['registration_success'] = true;
+            header("Location: ".$_SERVER['PHP_SELF']);
             exit();
         } else {
             echo "Error: " . $sql . "<br>" . $conn->error;
@@ -30,22 +34,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $conn->close();
 ?>
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Sign Up Form by Colorlib</title>
-    
-        <!-- Font Icon -->
-        <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
-    
-        <!-- Main css -->
-        <link rel="stylesheet" href="css/login.css">
-<style>
+<!-- Rest of your HTML code remains unchanged -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Up Form by Colorlib</title>
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="css/login.css">
+
+ <style>
         /* Modal Styles */
-.modal {
+        .modal {
   display: block;
   position: fixed;
   z-index: 1;
@@ -64,13 +72,17 @@ $conn->close();
   margin: 10% auto;
   padding: 20px;
   border: 1px solid #888;
+  max-width: 400px; /* Set a maximum width */
   width: 80%;
   text-align: center;
+  position: relative; /* Added relative positioning */
 }
 
 .close {
   color: #aaaaaa;
-  float: right;
+  position: absolute;
+  top: 10px; /* Adjust the top position as needed */
+  right: 10px; /* Adjust the right position as needed */
   font-size: 28px;
   font-weight: bold;
   cursor: pointer;
@@ -95,8 +107,10 @@ $conn->close();
   cursor: pointer;
 }
 </style>
-    </head>
-    <body>
+
+
+</head>
+<body>
 
     <div class="main">
 
@@ -155,58 +169,74 @@ $conn->close();
             </div>
         </section>
 
-    <!-- JS -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="js/login.js"></script>
-
     <!-- Modal Box -->
-<div id="myModal" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <p>Registration successful! Click OK to close.</p>
-    <button id="modalOkBtn" onclick="closeModal()">OK</button>
-  </div>
-</div>
+    <div id="myModal" class="modal" style="<?php echo (isset($_SESSION['registration_success']) && $_SESSION['registration_success']) ? 'display: block;' : 'display: none;'; ?>">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" onclick="closeModal(false)">&times;</span>
+            <p>Registration successful! <br>Click OK to close.</p>
+            <button id="modalOkBtn" onclick="closeModal(true)">OK</button>
+        </div>
+    </div>
+
+
+   <!-- JS -->
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="js/login.js"></script>
 
 <script>
-// Get the modal
-var modal = document.getElementById('myModal');
-
-// Get the button that opens the modal
-var signUpButton = document.getElementById('signup');
-
-// When the user clicks the button, open the modal
-signUpButton.onclick = function() {
-  modal.style.display = 'block';
-}
-
-// Function to close the modal and optionally redirect to signin.php
+// Function to close the modal and optionally redirect
 function closeModal(isOkButton) {
-  modal.style.display = 'none';
-  if (isOkButton) {
-    window.location.href = 'signin.php';
-  }
+    $('#myModal').css('display', 'none');
+    if (isOkButton) {
+        // Redirect to the signin page
+        window.location.href = 'signin.php';
+    }
+    // For other cases (e.g., "x" button), do nothing special
 }
+
+// Function to prevent form submission when the modal is closed
+function preventFormSubmission() {
+    // Display the modal
+    $('#myModal').css('display', 'block');
+
+    // Prevent form submission
+    $('#register-form').submit(function (event) {
+        event.preventDefault();
+    });
+}
+
+// Check if the session variable is set (registration success)
+<?php
+if (isset($_SESSION['registration_success']) && $_SESSION['registration_success']) {
+    echo "preventFormSubmission();";
+    // Unset the session variable to avoid showing the modal on subsequent page loads
+    unset($_SESSION['registration_success']);
+}
+?>
 
 // When the user clicks outside the modal, close it
-window.onclick = function(event) {
-  if (event.target === modal) {
-    closeModal(false);
-  }
-}
+window.onclick = function (event) {
+    if (event.target === document.getElementById('myModal')) {
+        closeModal(false);
+    }
+};
 
 // Event listener for the close button (&times;)
-document.getElementsByClassName('close')[0].onclick = function() {
-  closeModal(false);
+document.getElementsByClassName('close')[0].onclick = function () {
+    // Close the modal without preventing form submission
+    closeModal(false);
 };
 
 // Event listener for the OK button
-document.getElementById('modalOkBtn').onclick = function() {
-  closeModal(true);
+document.getElementById('modalOkBtn').onclick = function () {
+    // Close the modal and proceed with form submission
+    closeModal(true);
+    // Optionally, you can submit the form programmatically here if needed
 };
-</script>
 
+
+</script>
 
 
 

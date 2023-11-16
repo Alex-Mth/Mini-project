@@ -28,7 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "All fields are required.";
     } else {
         // Insert property details into the database
-        $sql = "INSERT INTO building (areainsqft, description, bedrooms, bathrooms, floor, roof, age, price, `condition`, building_type, address, city, state) VALUES ('$area', '$desc', '$bedroom', '$bathroom', '$floor', '$roof', '$age', '$price', '$condition', '$btype', '$address', '$city', '$state')";
+        $sql = "INSERT INTO building (areainsqft, description, bedrooms, bathrooms, floor, roof, age, price, `condition`, building_type, address, city, state, username) VALUES ('$area', '$desc', '$bedroom', '$bathroom', '$floor', '$roof', '$age', '$price', '$condition', '$btype', '$address', '$city', '$state', '" . $_SESSION['username'] . "')";
+
+
 
         if ($conn->query($sql) !== TRUE) {
             echo "Error: " . $sql . "<br>" . $conn->error;
@@ -77,8 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($token_amount)) {
                 // Insert token amount into the 'booking' table
                 $username = $_SESSION['username']; // Assuming username is stored in the session
-                $bookingSql = "INSERT INTO booking (bid, token_amount, username) VALUES ('$propertyId', '$token_amount', '$username')";
-
+                $bookingSql = "INSERT INTO booking (bid, token_amount, username) VALUES ('$propertyId', '$token_amount', '" . $_SESSION['username'] . "')";
                 if ($conn->query($bookingSql) !== TRUE) {
                     echo "Error: " . $bookingSql . "<br>" . $conn->error;
                 } else {

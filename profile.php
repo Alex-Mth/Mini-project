@@ -582,7 +582,7 @@ if (isset($_SESSION['username'])) {
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                   </svg>
-                  <a href="#" id="e">ORDER</a>
+                  <a href="order.php" id="e">ORDER</a>
                 </h6>
                 <span class="text-secondary"></span>
               </li>

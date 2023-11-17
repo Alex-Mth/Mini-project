@@ -1,3 +1,16 @@
+<?php
+$dbhost="localhost";
+$dbuser="root";
+$dbpass="";
+$dbname="prodeal";
+
+$conn= new mysqli($dbhost,$dbuser,$dbpass,$dbname);
+
+if ($conn->connect_error)
+{
+    die("Connection failed: ".$conn->connect_error);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -81,17 +94,17 @@
     </div>
     <!-- Navbar End -->
     <?php
-    include 'config.php';
+include 'config.php';
 
-    // Check if the property ID is set in the URL
-    if (isset($_GET['show'])) {
-      $propertyId = $_GET['show'];
+// Check if the property ID is set in the URL
+if (isset($_GET['show'])) {
+    $propertyId = $_GET['show'];
 
-      // Fetch property details from the database based on the property ID
-      $propertySql = "SELECT * FROM building WHERE bid = '$propertyId'";
-      $propertyResult = $conn->query($propertySql);
+    // Fetch property details from the database based on the property ID
+    $propertySql = "SELECT * FROM building WHERE bid = '$propertyId'";
+    $propertyResult = $conn->query($propertySql);
 
-      if ($propertyResult->num_rows > 0) {
+    if ($propertyResult->num_rows > 0) {
         $propertyRow = $propertyResult->fetch_assoc();
         $area = $propertyRow['areainsqft'];
         $price = $propertyRow['price'];
@@ -110,10 +123,19 @@
         $imageUrl2 = isset($imageRow['image2']) ? $imageRow['image2'] : '';
         $imageUrl3 = isset($imageRow['image3']) ? $imageRow['image3'] : '';
 
-        echo "<div class='site-section'>
-            <div class='container'>
-                <div class='row'>
-                    <div class='col-md-6' style='border-right: 1px solid #2e2e2e;'>
+        // Fetch booking details from the database based on the property ID
+        $bookingSql = "SELECT * FROM booking WHERE bid = '$propertyId'";
+        $bookingResult = $conn->query($bookingSql);
+
+        if ($bookingResult->num_rows > 0) {
+            $bookingRow = $bookingResult->fetch_assoc();
+            $end_date = $bookingRow['end_date'];
+            $current_date = date("Y-m-d");
+
+            echo "<div class='site-section'>
+                    <div class='container'>
+                        <div class='row'>
+                            <div class='col-md-6' style='border-right: 1px solid #2e2e2e;'>
                         <img id='main-image' src='$imageUrl' alt='Image' class='img-fluid'>
                         <br><br>
                         <div class='row'>
@@ -127,66 +149,41 @@
                                 <img src='" . ($imageUrl3 ? $imageUrl3 : '') . "' alt='Image ' class='img-fluid thumb' data-src='" . ($imageUrl3 ? $imageUrl3 : '') . "' style='width: 150px; height: 100px;'>
                             </div>
                         </div>
-                    </div>
-                    <div class='col-md-6' style='overflow-y: auto;'>
+                        </div>
+                        <div class='col-md-6' style='overflow-y: auto;'>
                         <h2 class='text-black'>$buildingType</h2>
                         <p style='color: black;'>$desc<br>
                          <strong> M.R.P ₹" . number_format($price) . "</strong></p>
-                        <div class='mb-5'>
-                            <div class='input-group mb-3' style='max-width: 120px;'></div>
-                        </div>
-                        <a class='btn btn-primary py-3 px-4 mt-3' href='booking.php'>Booking</a>
-                        <div class='container'>
-                            <p class='h3' style='color: black;'>Product Specifications</p>
-                            <table style='color: black; border: 1px solid black;'>
-                                <tr>
-                                    <th style='border: 1px solid black;  text-align: center;'>Category</th>
-                                    <th style='border: 1px solid black;  text-align: center;'>Specification</th>
-                                </tr>
-                                <tr>
-                                    <td style='border: 1px solid black;  text-align: center;'>General</td>
-                                    <td style='border: 1px solid black;  text-align: center;'>Product Name: Example Product</td>
-                                </tr>
-                                <tr>
-                                    <td style='border: 1px solid black;  text-align: center;'></td>
-                                    <td style='border: 1px solid black;  text-align: center;'>Model: ABC-123</td>
-                                </tr>
-                                <tr>
-                                    <td style='border: 1px solid black;  text-align: center;'>Features</td>
-                                    <td style='border: 1px solid black;  text-align: center;'>Screen Size: 15 inches</td>
-                                </tr>
-                                <tr>
-                                    <td style='border: 1px solid black; text-align: center;'></td>
-                                    <td style='border: 1px solid black;  text-align: center;'>Processor: Quad-core 2.0 GHz</td>
-                                </tr>
-                                <tr>
-                                    <td style='border: 1px solid black;  text-align: center;'>Connectivity</td>
-                                    <td style='border: 1px solid black;  text-align: center;'>Wi-Fi: 802.11ac</td>
-                                </tr>
-                                <tr>
-                                    <td style='border: 1px solid black;  text-align: center;'></td>
-                                    <td style='border: 1px solid black;  text-align: center;'>Bluetooth: 5.0</td>
-                                </tr>
-                                <tr>
-                                    <td style='border: 1px solid black;  text-align: center;'>Other Details</td>
-                                    <td style='border: 1px solid black;  text-align: center;'>Dimensions: 13.5' x 9.5' x 0.75'</td>
-                                </tr>
-                                <tr>
-                                    <td style='border: 1px solid black;  text-align: center;'></td>
-                                    <td style='border: 1px solid black;  text-align: center;'>Weight: 3.5 lbs</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>";
-      }
-    } else {
-      echo "No properties found.";
-    }
-    $conn->close();
-    ?>
+                         <div class='mb-5'>
+                         <div class='input-group mb-3' style='max-width: 120px;'></div>
+                     </div>";
+
+ // Check if 'end_date' is in the future (greater than the current date)
+ if (strtotime($end_date) > strtotime(date("Y-m-d"))) {
+     // Property is booked, don't show the booking button
+     echo "<p>This property is already booked.</p>";
+ } else {
+     // Property is not booked, show the booking button
+     // Redirect to the booking form
+     echo "<a class='btn btn-primary py-3 px-4 mt-3' href='booking.php?bid=$propertyId'>Book Now</a>";
+ }
+
+ echo "</div>
+     </div>
+ </div>";
+} else {
+ // Property is not yet available for booking
+ echo "This property is not available for booking until the specified end date.";
+}
+} else {
+echo "No properties found.";
+}
+} else {
+echo "Invalid property ID.";
+}
+
+$conn->close();
+?>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var mainImage = document.getElementById('main-image');

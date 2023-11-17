@@ -121,77 +121,91 @@ include 'config.php';
         <!-- Navbar End -->
 
 
-<?php
-// Check if the 'type' parameter is set in the URL
-if (isset($_GET['type'])) {
-    $propertyType = $_GET['type'];
+        <?php
+// Fetch property data from the database
+$sql = "SELECT * FROM building";
+$result = $conn->query($sql);
 
-    // Fetch properties based on the selected property type
-    $query = "SELECT * FROM building WHERE building_type = '$propertyType'";
-    $result = $conn->query($query);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $propertyId = $row['bid'];
+        $area = $row['areainsqft'];
+        $price = $row['price'];
+        $buildingType = $row['building_type'];
+        $address = $row['address'];
+        $bedrooms = $row['bedrooms'];
+        $bathrooms = $row['bathrooms'];
+        $desc = $row['description'];
 
-    // Display the filtered properties
-    echo '<div class="container-xxl py-5">';
-    echo '<div class="container" id="emu">';
-    echo '<div class="tab-content">';
-    echo '<div id="tab-1" class="tab-pane fade show p-0 active">';
-    echo '<div class="row g-4">';
+        // Check if the property is booked
+        $bookingsql = "SELECT * FROM booking WHERE bid = '$propertyId'";
+        $bookingResult = $conn->query($bookingsql);
 
-    // Check if there are properties matching the filter
-    if ($result->num_rows > 0) {
-        while ($property = $result->fetch_assoc()) {
-            // Extract property details
-            $propertyId = $property['bid'];
-            $area = $property['areainsqft'];
-            $price = $property['price'];
-            $buildingType = $property['building_type'];
-            $address = $property['address'];
-            $bedrooms = $property['bedrooms'];
-            $bathrooms = $property['bathrooms'];
-            $desc = $property['description'];
+        if ($bookingResult->num_rows > 0) {
+            $bookingRow = $bookingResult->fetch_assoc();
+            $isBooked = true; // Property is booked
+            $end_date = $bookingRow['end_date']; // Replace with the actual end_date from your database
 
-            // Fetch property image URL
+            // If the property is not booked or the end_date is in the future, display it
+            if (!$isBooked || strtotime($end_date) < strtotime(date("Y-m-d"))) {
+                // Output the property data in the desired style
+                $imageSql = "SELECT image FROM building_images WHERE bid = '$propertyId'";
+                $imageResult = $conn->query($imageSql);
+                $imageRow = $imageResult->fetch_assoc();
+                $imageUrl = $imageRow['image'];
+
+                echo "<div class='col-lg-4 col-md-6 wow fadeInUp' data-wow-delay='0.1s'>
+                        <div class='property-item rounded overflow-hidden'>
+                            <div class='position-relative overflow-hidden'>
+                                <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
+                                <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
+                            </div>
+                            <div class='p-4 pb-0'>
+                                <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
+                                <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
+                                <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
+                            </div>
+                            <div class='d-flex border-top'>
+                                <small class='flex-fill text-center border-end py-2'><i class='fa fa-bed text-primary me-2'></i>$bedrooms Bed</small>
+                                <small class='flex-fill text-center py-2'><i class='fa fa-bath text-primary me-2'></i>$bathrooms Bath</small>
+                            </div>
+                        </div>
+                    </div>";
+            }
+        } else {
+            // If there are no bookings for the property, display it
+            // Output the property data in the desired style
             $imageSql = "SELECT image FROM building_images WHERE bid = '$propertyId'";
             $imageResult = $conn->query($imageSql);
             $imageRow = $imageResult->fetch_assoc();
             $imageUrl = $imageRow['image'];
 
-            // Output the property data in the desired style
             echo "<div class='col-lg-4 col-md-6 wow fadeInUp' data-wow-delay='0.1s'>
-                <div class='property-item rounded overflow-hidden'>
-                    <div class='position-relative overflow-hidden'>
-                        <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
-                        <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
+                    <div class='property-item rounded overflow-hidden'>
+                        <div class='position-relative overflow-hidden'>
+                            <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
+                            <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
+                        </div>
+                        <div class='p-4 pb-0'>
+                            <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
+                            <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
+                            <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
+                        </div>
+                        <div class='d-flex border-top'>
+                            <small class='flex-fill text-center border-end py-2'><i class='fa fa-bed text-primary me-2'></i>$bedrooms Bed</small>
+                            <small class='flex-fill text-center py-2'><i class='fa fa-bath text-primary me-2'></i>$bathrooms Bath</small>
+                        </div>
                     </div>
-                    <div class='p-4 pb-0'>
-                        <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
-                        <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
-                        <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
-                    </div>
-                    <div class='d-flex border-top'>
-                        <small class='flex-fill text-center border-end py-2'><i class='fa fa-bed text-primary me-2'></i>$bedrooms Bed</small>
-                        <small class='flex-fill text-center py-2'><i class='fa fa-bath text-primary me-2'></i>$bathrooms Bath</small>
-                    </div>
-                </div>
-            </div>";
+                </div>";
         }
-    } else {
-        echo "<div class='col-12 text-center'><p>No properties found for the selected type.</p></div>";
     }
-
-    echo '</div>'; // Closing row
-    echo '</div>'; // Closing tab-pane
-    echo '</div>'; // Closing tab-content
-    echo '</div>'; // Closing container
-    echo '</div>'; // Closing container-xxl
-
-    $conn->close();
 } else {
-    // Redirect to the home page if 'type' parameter is not set
-    header("Location: index.php");
-    exit();
+    echo "No properties found.";
 }
+
+$conn->close();
 ?>
+
 <!-- Footer Start -->
 <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
             <div class="container py-5">

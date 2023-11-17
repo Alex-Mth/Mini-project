@@ -1,31 +1,28 @@
 <?php
 session_start();
 include 'config.php';
-
+$propertyId=$_GET['bid'];
 if (!isset($_SESSION['username'])) {
-    header('Location: booking.php');
+    header('Location: index.php');
     exit;
 }
 
 // Check if property ID is already in the session
-$propertyId = isset($_SESSION['bid']) ? $_SESSION['bid'] : null;
+//$propertyId = isset($_SESSION['bid']) ? $_SESSION['bid'] : null;
 
 // If property ID is not set, retrieve it based on some condition (e.g., username)
-if (!$propertyId && isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
+//if (!$propertyId && isset($_SESSION['username'])) {
+   // $username = $_SESSION['username'];
 
     // Query to get property ID based on the username (you might need to adjust this query)
-    $query = "SELECT bid FROM building WHERE username = '$username'";
-    $result = $conn->query($query);
+  //  $query = "SELECT bid FROM building WHERE username = '$username'";
+   // $result = $conn->query($query);
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $propertyId = $row['bid'];
-
-        // Set property ID in the session
-        $_SESSION['bid'] = $propertyId;
-    }
-}
+  //  if ($result->num_rows > 0) {
+ //       $row = $result->fetch_assoc();
+    
+ //   }
+//}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if form was submitted
@@ -38,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($propertyId) {
             // Insert booking details into the database
             $username = $_SESSION['username'];
-            $bookingSql = "INSERT INTO booking (bid, end_date, username) VALUES ('$propertyId', '$end_date', '$username')";
+            $bookingSql = "UPDATE booking SET end_date='$end_date' WHERE bid='$propertyId' ";
 
             echo "SQL Query: $bookingSql<br>";
 
@@ -49,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['success_message'] = "Booking details added successfully.";
 
                 // Redirect to the same page after successful form submission
-                header('Location: ' . $_SERVER['PHP_SELF']);
+                header('Location:index.php');
                 exit;
             }
         } else {

@@ -1,12 +1,120 @@
+
 <?php
 include 'config.php';
 
-session_start();
+?>
+<html>
+    <head>
+        
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
 
+<!-- Google Web Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap"
+    rel="stylesheet">
+
+<!-- Icon Font Stylesheet -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Libraries Stylesheet -->
+<link href="lib/animate/animate.min.css" rel="stylesheet">
+<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+<!-- Customized Bootstrap Stylesheet -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Template Stylesheet -->
+<link href="css/style.css" rel="stylesheet">
+<style>
+    #card{
+        width: 400px;
+        height: 400px;
+        overflow: hidden;
+    }
+    #img{
+        width: 400px;
+        height: 200px;
+    
+    }
+</style>
+    </head>
+    <body>
+         <!-- Navbar Start -->
+         <div class="container-fluid nav-bar bg-transparent">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
+                <a href="index.html" class="navbar-brand d-flex align-items-center text-center">
+                    <div class="icon p-2 me-2">
+                        <img class="img-fluid" src="img/icon-deal.png" alt="Icon" style="width: 30px; height: 30px;">
+                    </div>
+                    <h1 class="m-0 text-primary">PRODEAL</h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto">
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="about.php" class="nav-item nav-link">About</a>
+                        <a href="shop.php" class="nav-item nav-link">Shop</a>
+                        <?php
+                        session_start();
+
+                        // Check if the user is logged in (adjust this condition based on your authentication logic)
+                        if (isset($_SESSION['username'])) {
+                            // Display the user's username in a dropdown
+                            echo '<div class="nav-item dropdown">';
+                            echo '<a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' . $_SESSION['username'] . '</a>';
+                            echo '<div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+                            echo '<a href="logout.php" class="dropdown-item">Logout</a>';
+                            echo '<a href="profile.php" class="dropdown-item">Profile</a>';
+                            echo '</div>';
+                            echo '</div>';
+                        } else {
+                            // Display the "Sign in" link
+                            echo '<a href="signin.php" class="nav-item nav-link">Sign in</a>';
+                        }
+                        ?>
+
+
+                        <script>
+                            function logout() {
+                                // Redirect to the logout script
+                                window.location.href = "logout.php";
+                            }
+                        </script>
+
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Property</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="#agent" class="dropdown-item">Property Agent</a>
+                            </div>
+                        </div>
+                        <a href="contact.php" class="nav-item nav-link">Contact</a>
+                    </div>
+                    <a href="addproperty.php" class="btn btn-primary px-3 d-none d-lg-flex">Add Property</a>
+                </div>
+            </nav>
+        </div>
+        <!-- Navbar End -->
+
+    </body>
+</html>
+
+
+
+<?php
 if (!isset($_SESSION['username'])) {
     header('Location: signin.php');
     exit;
 }
+echo'
+<div class="container" id="emu">
+<div class="tab-content">
+    <div id="tab-1" class="tab-pane fade show p-0 active">
+        <div class="row g-4">';
 
 $username = $_SESSION['username'];
 
@@ -20,20 +128,42 @@ $result = $conn->query($selectPropertiesQuery);
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
+        $propertyId=$row['bid'];
+        echo "<div class='col-lg-4 col-md-6 wow fadeInUp' data-wow-delay='0.1s' id='card' >
+        <div class='property-item rounded overflow-hidden'>
+            <div class='position-relative overflow-hidden'>
+          ";
+        $imageSql = "SELECT image FROM building_images WHERE bid = '$propertyId'";
+                $imageResult = $conn->query($imageSql);
+                $imageRow = $imageResult->fetch_assoc();
+                $imageUrl = $imageRow['image'];
+
         // Display property details here
-        echo "Property ID: " . $row['bid'] . "<br>";
+      echo" <img class='img-fluid' src='$imageUrl' alt='' id='img'>";
+                           echo" <div class='p-4 pb-0'>";
+        echo "Address: " . $row['address'] . "<br>";
         echo "Area: " . $row['areainsqft'] . "<br>";
+        echo "City: " . $row['city'] . "<br>";
+        echo "State: " . $row['state'] . "<br>";
+        
         // Add more details as needed
 
         // Display booking details
         echo "Booking ID: " . ($row['booking_id'] ?? 'Not booked') . "<br>";
         echo "Status: " . (($row['booking_id'] != null) ? 'BOOKED' : 'NOT BOOKED') . "<br>";
 
-        echo "<hr>";
+        echo "<hr>
+        </div>
+        </div>
+        </div>
+        </div>";
     }
 } else {
     echo "No properties found for the current user.";
 }
-
+echo"</div>
+</div>
+</div>
+</div>";
 $conn->close();
 ?>

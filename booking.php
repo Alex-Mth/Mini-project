@@ -35,6 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($propertyId) {
             // Insert booking details into the database
             $username = $_SESSION['username'];
+            $sql= "INSERT INTO `order` ( bid,username) VALUES ('$propertyId','$username')";
+          
+            if ($conn->query($sql) !== TRUE) {
+                $_SESSION['success_message'] = "Booking details added successfully.";
+
+                // Redirect to the same page after successful form submission
+                header('Location:index.php');
+                exit;
+            } 
             $bookingSql = "UPDATE booking SET end_date='$end_date' WHERE bid='$propertyId' ";
 
             echo "SQL Query: $bookingSql<br>";

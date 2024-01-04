@@ -234,6 +234,7 @@ if ($result->num_rows > 0) {
         $bedrooms = $row['bedrooms'];
         $bathrooms = $row['bathrooms'];
         $desc = $row['description'];
+        $city = $row['city'];
 
         // Check if the property is booked
         $bookingsql = "SELECT * FROM booking WHERE bid = '$propertyId'";
@@ -261,6 +262,7 @@ if ($result->num_rows > 0) {
                             <div class='p-4 pb-0'>
                                 <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
                                 <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
+                                <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$city </p>
                                 <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
                             </div>
                             <div class='d-flex border-top'>

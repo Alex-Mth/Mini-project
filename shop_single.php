@@ -113,6 +113,8 @@ if (isset($_GET['show'])) {
         $bedrooms = $propertyRow['bedrooms'];
         $bathrooms = $propertyRow['bathrooms'];
         $desc = $propertyRow['description'];
+        $city = $propertyRow['city'];
+        $state = $propertyRow['state'];
 
         // Output the property data in the desired style
         $imageSql = "SELECT image, image1, image2, image3 FROM building_images WHERE bid = '$propertyId'";
@@ -122,6 +124,8 @@ if (isset($_GET['show'])) {
         $imageUrl1 = isset($imageRow['image1']) ? $imageRow['image1'] : '';
         $imageUrl2 = isset($imageRow['image2']) ? $imageRow['image2'] : '';
         $imageUrl3 = isset($imageRow['image3']) ? $imageRow['image3'] : '';
+
+        
 
         // Fetch booking details from the database based on the property ID
         $bookingSql = "SELECT * FROM booking WHERE bid = '$propertyId'";
@@ -154,6 +158,8 @@ if (isset($_GET['show'])) {
                         <h2 class='text-black'>$buildingType</h2>
                         <p style='color: black;'>$desc<br>
                          <strong> M.R.P ₹" . number_format($price) . "</strong></p>
+                         <p style='color: black;'>$city<br>
+                         <p style='color: black;'>$state<br>
                          <div class='mb-5'>
                          <div class='input-group mb-3' style='max-width: 120px;'></div>
                      </div>";

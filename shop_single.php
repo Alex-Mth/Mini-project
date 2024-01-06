@@ -173,10 +173,27 @@ if (isset($_GET['show'])) {
      // Redirect to the booking form
      echo "<a class='btn btn-primary py-3 px-4 mt-3' href='booking.php?bid=$propertyId'>Book Now</a>";
  }
+ $username = $bookingRow['username'];
+ $userSql = "SELECT * FROM user WHERE username = '$username'";
+ $userResult = $conn->query($userSql);
 
- echo "</div>
-     </div>
- </div>";
+ if ($userResult->num_rows > 0) {
+     $userRow = $userResult->fetch_assoc();
+     $name = $userRow['name'];
+     $phone = $userRow['phone'];
+     $email = $userRow['email'];
+     $userAddress = $userRow['address'];
+
+     // Display user details
+     echo "<div class='user-details' style='padding-top: 50px;'>
+             <h3>User Details</h3>
+             <p><strong>Name:</strong> $name</p>
+             <p><strong>Phone:</strong> $phone</p>
+             <p><strong>Email:</strong> $email</p>
+             <p><strong>Address:</strong> $userAddress</p>
+         </div>";
+ }
+     echo "</div></div></div>";
 } else {
  // Property is not yet available for booking
  echo "This property is not available for booking until the specified end date.";

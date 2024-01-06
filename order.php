@@ -2,40 +2,42 @@
 // Start the session at the beginning of the file
 session_start();
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 // Include the config file
 include 'config.php';
 
-// Debug: Display session data
-echo "<pre>";
-print_r($_SESSION);
-echo "</pre>";
+// Debug: Display session dat
 
-// Check if the user is logged in
-if (!isset($_SESSION['userid'])) {
-    // Debug: Display a message if the user is not logged in
-    echo "User not logged in.";
-    // Redirect or display an error message if the user is not logged in
-    header("Location: signin.php");
-    exit();
-}
 
 // Get the user's ID
-$user_id = $_SESSION['userid'];
+$username = $_SESSION['username'];
 
 // Debug: Display user ID
-echo "User ID: $user_id<br>";
+
 
 // Fetch booking details for the current user
 $bookingSql = "SELECT booking.*, building.address, building.price
                FROM booking
                JOIN building ON booking.bid = building.bid
-               WHERE booking.userid = '$user_id'";
+               WHERE booking.username = '$username'";
+
 $bookingResult = $conn->query($bookingSql);
 
-// Debug: Display SQL query result
-echo "<pre>";
-print_r($bookingResult);
-echo "</pre>";
+if ($bookingResult->num_rows > 0) {
+    while ($bookingRow = $bookingResult->fetch_assoc()) {
+        // Access the booking details and additional information here
+        $bookingId = $bookingRow['booking_id'];
+        $propertyAddress = $bookingRow['address'];
+        $propertyPrice = $bookingRow['price'];
+        // ... other booking details
+    }
+    // Rest of your code for displaying or processing the booking details
+} else {
+    echo "No bookings found for the user.";
+}
 ?>
 
 <!-- The rest of your HTML code here -->
@@ -144,122 +146,188 @@ echo "</pre>";
         <!-- Content section -->
         <div class="container mt-5">
             <h2>Your Orders</h2>
+<br><br>
+            <div class="container" id="emu">
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane fade show p-0 active">
+                        <div class="row g-4">
+                        <div class="row mb-5">
+                    <form class="col-md-12" method="post">
+                        <div class="site-blocks-table">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="product-thumbnail">Image</th>
+                                        <th class="product-name">Address</th>
+                                        <th class="product-quantity">Building type</th>
+                                        <th class="product-total">Price</th>
+                                        <th class="product-remove">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+global $productId;
+if (isset($_SESSION['username'])) {
+  $username = $_SESSION['username'];
+  $cartItemsQuery = "SELECT bid, address, building_type, price FROM building WHERE username = ?";
+  $stmt = $conn->prepare($cartItemsQuery);
 
-            <?php
-            if ($bookingResult->num_rows > 0) {
-                while ($bookingRow = $bookingResult->fetch_assoc()) {
-                    $orderDate = $bookingRow['order_date'];
-                    $endDate = $bookingRow['end_date'];
-                    $propertyAddress = $bookingRow['address'];
-                    $price = $bookingRow['price'];
+  if ($stmt) {
+    $stmt->bind_param("s", $_SESSION['username']);
+    $stmt->execute();
+    $cartItemsResult = $stmt->get_result();
 
-                    echo "<div class='card mb-3'>
-                            <div class='card-body'>
-                                <h5 class='card-title'>Order Date: $orderDate</h5>
-                                <p class='card-text'>End Date: $endDate</p>
-                                <p class='card-text'>Property Address: $propertyAddress</p>
-                                <p class='card-text'>Price: $" . number_format($price) . "</p>
-                            </div>
-                        </div>";
-                }
-            } else {
-                echo "<p>No orders found.</p>";
-            }
-            ?>
-        </div>
-    </div>
+    if (!empty($cartItemsResult) && $cartItemsResult->num_rows > 0) {
+      while ($row = $cartItemsResult->fetch_assoc()) {
 
-    <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-        <div class="container py-5">
-            <div class="row g-5">
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Get In Touch</h5>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
-                    <div class="d-flex pt-2">
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
-                    </div>
+        $bid = $row['bid'];
+        $imageQuery = "SELECT image FROM building_images WHERE bid = ?";
+        $imageStmt = $conn->prepare($imageQuery);
+        
+        if ($imageStmt) {
+          $imageStmt->bind_param("i", $bid);
+          $imageStmt->execute();
+          $imageResult = $imageStmt->get_result();
+          
+          if ($imageResult->num_rows > 0) {
+            $imageRow = $imageResult->fetch_assoc();
+            $productImage = $imageRow['image'];
+
+            $productName = $row['address'];
+            $quantity = $row['building_type'];
+            $price = $row['price'];
+
+            echo "<tr>
+                    <td><img src='$productImage' alt='$productName' style='max-width: 100px; max-height: 100px;'></td>
+                    <td>$productName</td>
+                    <td>$quantity</td>
+                    <td>₹$price</td>
+                    <td><a href='#' class='btn btn-primary btn-sm remove-item' data-toggle='modal' data-target='#confirmationModal'>X</a></td>
+                  </tr>";
+          }
+          $imageStmt->close();
+        } else {
+          echo "<tr><td colspan='6'>Error in preparing image statement.</td></tr>";
+        }
+      }
+    } else {
+      echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+    }
+    $stmt->close();
+  } else {
+    echo "<tr><td colspan='6'>Error in preparing statement.</td></tr>";
+  }
+} else {
+  echo "<tr><td colspan='6'>User not logged in.</td></tr>";
+}
+?>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Quick Links</h5>
-                    <a class="btn btn-link text-white-50" href="">About Us</a>
-                    <a class="btn btn-link text-white-50" href="">Contact Us</a>
-                    <a class="btn btn-link text-white-50" href="">Our Services</a>
-                    <a class="btn btn-link text-white-50" href="">Privacy Policy</a>
-                    <a class="btn btn-link text-white-50" href="">Terms & Condition</a>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Photo Gallery</h5>
-                    <div class="row g-2 pt-2">
-                        <div class="col-4">
-                            <img class="img-fluid rounded bg-light p-1" src="img/property-1.jpg" alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded bg-light p-1" src="img/property-2.jpg" alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded bg-light p-1" src="img/property-3.jpg" alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded bg-light p-1" src="img/property-4.jpg" alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded bg-light p-1" src="img/property-5.jpg" alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded bg-light p-1" src="img/property-6.jpg" alt="">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Newsletter</h5>
-                    <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-                    <div class="position-relative mx-auto" style="max-width: 400px;">
-                        <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="text"
-                            placeholder="Your email">
-                        <button type="button"
-                            class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
+
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- Footer End -->
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
-    <!-- Include your scripts here -->
-    <!-- ... -->
 
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+            <!-- Footer Start -->
+            <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+                <div class="container py-5">
+                    <div class="row g-5">
+                        <div class="col-lg-3 col-md-6">
+                            <h5 class="text-white mb-4">Get In Touch</h5>
+                            <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                            <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
+                            <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                            <div class="d-flex pt-2">
+                                <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="btn btn-outline-light btn-social" href=""><i
+                                        class="fab fa-facebook-f"></i></a>
+                                <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                                <a class="btn btn-outline-light btn-social" href=""><i
+                                        class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <h5 class="text-white mb-4">Quick Links</h5>
+                            <a class="btn btn-link text-white-50" href="">About Us</a>
+                            <a class="btn btn-link text-white-50" href="">Contact Us</a>
+                            <a class="btn btn-link text-white-50" href="">Our Services</a>
+                            <a class="btn btn-link text-white-50" href="">Privacy Policy</a>
+                            <a class="btn btn-link text-white-50" href="">Terms & Condition</a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <h5 class="text-white mb-4">Photo Gallery</h5>
+                            <div class="row g-2 pt-2">
+                                <div class="col-4">
+                                    <img class="img-fluid rounded bg-light p-1" src="img/property-1.jpg" alt="">
+                                </div>
+                                <div class="col-4">
+                                    <img class="img-fluid rounded bg-light p-1" src="img/property-2.jpg" alt="">
+                                </div>
+                                <div class="col-4">
+                                    <img class="img-fluid rounded bg-light p-1" src="img/property-3.jpg" alt="">
+                                </div>
+                                <div class="col-4">
+                                    <img class="img-fluid rounded bg-light p-1" src="img/property-4.jpg" alt="">
+                                </div>
+                                <div class="col-4">
+                                    <img class="img-fluid rounded bg-light p-1" src="img/property-5.jpg" alt="">
+                                </div>
+                                <div class="col-4">
+                                    <img class="img-fluid rounded bg-light p-1" src="img/property-6.jpg" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <h5 class="text-white mb-4">Newsletter</h5>
+                            <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+                            <div class="position-relative mx-auto" style="max-width: 400px;">
+                                <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="text"
+                                    placeholder="Your email">
+                                <button type="button"
+                                    class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer End -->
 
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap"
-        rel="stylesheet">
+            <!-- Back to Top -->
+            <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
-    <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+            <!-- Include your scripts here -->
+            <!-- ... -->
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+            <!-- Favicon -->
+            <link href="img/favicon.ico" rel="icon">
 
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+            <!-- Google Web Fonts -->
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link
+                href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap"
+                rel="stylesheet">
+
+            <!-- Icon Font Stylesheet -->
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+            <!-- JavaScript Libraries -->
+            <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="lib/wow/wow.min.js"></script>
+            <script src="lib/easing/easing.min.js"></script>
+            <script src="lib/waypoints/waypoints.min.js"></script>
+            <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+            <!-- Template Javascript -->
+            <script src="js/main.js"></script>
 
 </body>
 

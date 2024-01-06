@@ -1,402 +1,431 @@
-<?php
-include('config.php');
-
-// Function to sanitize user input
-function sanitizeInput($input) {
-    return htmlspecialchars(trim($input));
-}
-
-/// Function to update user details
-function updateUser($conn, $userId, $columnName, $newValue) {
-    // Begin a transaction
-    $conn->begin_transaction();
-
-    try {
-        // Update the corresponding foreign key values in the related table
-        $updateRelatedQuery = "UPDATE booking SET username = ? WHERE username = ?";
-        $stmtRelated = $conn->prepare($updateRelatedQuery);
-        $stmtRelated->bind_param("ss", $newValue, $userId);
-        $stmtRelated->execute();
-        $stmtRelated->close();
-
-        // Update the user table
-        $updateQuery = "UPDATE user SET $columnName = ? WHERE userid = ?";
-        $stmt = $conn->prepare($updateQuery);
-        $stmt->bind_param("si", $newValue, $userId);
-        $stmt->execute();
-        $stmt->close();
-
-        // Commit the transaction
-        $conn->commit();
-    } catch (mysqli_sql_exception $e) {
-        // Rollback the transaction on exception
-        $conn->rollback();
-        throw $e; // Re-throw the exception after rollback
-    }
-}
-
-
-
-
-
-
-
-// Function to update property details
-function updateProperty($conn, $propertyId, $columnName, $newValue) {
-    // Check if the new bid value already exists
-    $checkQuery = "SELECT COUNT(*) FROM building WHERE bid = ?";
-    $checkStmt = $conn->prepare($checkQuery);
-    $checkStmt->bind_param("i", $newValue);
-    $checkStmt->execute();
-    $checkStmt->bind_result($count);
-    $checkStmt->fetch();
-    $checkStmt->close();
-
-    if ($count > 0) {
-        // Handle the case where the new bid value already exists
-        echo "Error: The new bid value already exists.";
-        return;
-    }
-
-    // Update the property table
-    $updateQuery = "UPDATE building SET $columnName = ? WHERE bid = ?";
-    $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("ii", $newValue, $propertyId);
-    $stmt->execute();
-    $stmt->close();
-}
-
-
-// Function to update booking details
-function updateBooking($conn, $bookingId, $columnName, $newValue) {
-    $updateQuery = "UPDATE booking SET $columnName = ? WHERE booking_id = ?";
-    $stmt = $conn->prepare($updateQuery);
-
-    // Check if the column is part of a foreign key constraint
-    if ($columnName == 'username') {
-        // Update the corresponding foreign key value in the related table
-        $updateRelatedQuery = "UPDATE booking SET username = ? WHERE username = ?";
-        $stmtRelated = $conn->prepare($updateRelatedQuery);
-        $stmtRelated->bind_param("ss", $newValue, $bookingId);
-        $stmtRelated->execute();
-        $stmtRelated->close();
-    }
-
-    $stmt->bind_param("si", $newValue, $bookingId);
-    $stmt->execute();
-    $stmt->close();
-}
-
-// Handle form submissions for editing
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['editSubmit'])) {
-        $section = sanitizeInput($_POST['section']);
-        $column = sanitizeInput($_POST['column']);
-        $id = sanitizeInput($_POST['id']);
-        $newValue = sanitizeInput($_POST['newValue']);
-
-        // Determine which table to update based on the section
-        switch ($section) {
-            case 'userAccounts':
-                updateUser($conn, $id, $column, $newValue);
-                break;
-            case 'propertyDetails':
-                updateProperty($conn, $id, $column, $newValue);
-                break;
-            case 'bookingDetails':
-                updateBooking($conn, $id, $column, $newValue);
-                break;
-        }
-    }
-}
-
-?>
-<!-- rest of the HTML and JavaScript code remains unchanged -->
-
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <!-- Required meta tags-->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <style>
-        body {
-            background-color: white;
-            font-family: 'Arial', sans-serif;
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="au theme template">
+    <meta name="author" content="Hau Nguyen">
+    <meta name="keywords" content="au theme template">
 
-        h1 {
-            color: #00cc00; /* Green */
-            font-weight: bold;
-        }
+    <!-- Title Page-->
+    <title>Dashboard</title>
 
-        button {
-            color: white;
-            background-color: #4CAF50; /* Green */
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
+    <!-- Fontfaces CSS-->
+    <link href="css/font-face.css" rel="stylesheet" media="all">
+    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <link href="vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
+    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
 
-        button:hover {
-            background-color: #45a049; /* Darker Green */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+    <!-- Bootstrap CSS-->
+    <link href="vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
 
-        .dashboard-section {
-            display: none;
-            margin-top: 20px;
-        }
+    <!-- Vendor CSS-->
+    <link href="vendor/animsition/animsition.min.css" rel="stylesheet" media="all">
+    <link href="vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet" media="all">
+    <link href="vendor/wow/animate.css" rel="stylesheet" media="all">
+    <link href="vendor/css-hamburgers/hamburgers.min.css" rel="stylesheet" media="all">
+    <link href="vendor/slick/slick.css" rel="stylesheet" media="all">
+    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
 
-        .active {
-            display: block;
-        }
+    <!-- Main CSS-->
+    <link href="css/theme.css" rel="stylesheet" media="all">
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .edit-button {
-            background-color: #008CBA;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-    </style>
 </head>
-<body>
-    <h1>Admin Dashboard</h1>
 
-    <!-- Buttons to toggle sections -->
-    <button onclick="showSection('userAccounts')">User Accounts</button>
-    <button onclick="showSection('propertyDetails')">Property Details</button>
-    <button onclick="showSection('bookingDetails')">Booking Details</button>
+<body class="animsition">
+    <div class="page-wrapper">
+      
+     
+       
 
-    <!-- User Accounts Section -->
-    <section class="dashboard-section" id="userAccounts">
-        <h2>User Accounts</h2>
-        <table>
-            <tr>
-                <th>Edit</th>
-                <th>User ID</th>
-                <th>Username</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Password</th>
-                <th>Address</th>
-            </tr>
-            <?php
-            $userQuery = "SELECT * FROM user";
-            $userResult = $conn->query($userQuery);
-            while ($user = $userResult->fetch_assoc()):
-            ?>
-                <tr>
-                    <td>
-                        <button class="edit-button" onclick="showEditForm('userAccounts', '<?= $user['userid'] ?>')">Edit</button>
-                    </td>
-                    <td><?= $user['userid'] ?></td>
-                    <td><?= $user['username'] ?></td>
-                    <td><?= $user['name'] ?></td>
-                    <td><?= $user['phone'] ?></td>
-                    <td><?= $user['email'] ?></td>
-                    <td><?= $user['password'] ?></td>
-                    <td><?= $user['address'] ?></td>
-                </tr>
-            <?php endwhile; ?>
-        </table>
-    </section>
+        <!-- PAGE CONTAINER-->
+       
 
-    <!-- Property Details Section -->
-    <section class="dashboard-section" id="propertyDetails">
-        <h2>Properties</h2>
-        <table>
-            <tr>
-                <th>Edit</th>
-                <th>Property ID</th>
-                <th>Area (in sqft)</th>
-                <th>Description</th>
-                <th>Bedrooms</th>
-                <th>Bathrooms</th>
-                <th>Floor</th>
-                <th>Roof</th>
-                <th>Age</th>
-                <th>Condition</th>
-                <th>Building Type</th>
-                <th>Price</th>
-                <th>Address</th>
-            </tr>
-            <?php
-            $propertyQuery = "SELECT * FROM building";
-            $propertyResult = $conn->query($propertyQuery);
-            while ($property = $propertyResult->fetch_assoc()):
-            ?>
-                <tr>
-                    <td>
-                        <button class="edit-button" onclick="showEditForm('propertyDetails', '<?= $property['bid'] ?>')">Edit</button>
-                    </td>
-                    <td><?= $property['bid'] ?></td>
-                    <td><?= $property['areainsqft'] ?></td>
-                    <td><?= $property['description'] ?></td>
-                    <td><?= $property['bedrooms'] ?></td>
-                    <td><?= $property['bathrooms'] ?></td>
-                    <td><?= $property['floor'] ?></td>
-                    <td><?= $property['roof'] ?></td>
-                    <td><?= $property['age'] ?></td>
-                    <td><?= $property['condition'] ?></td>
-                    <td><?= $property['building_type'] ?></td>
-                    <td><?= $property['price'] ?></td>
-                    <td><?= $property['address'] ?></td>
-                </tr>
-            <?php endwhile; ?>
-        </table>
-    </section>
+            <!-- MAIN CONTENT-->
+            <div class="main-content">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="overview-wrap">
+                                    <h2 class="title-1">overview</h2>
+                                    <button class="au-btn au-btn-icon au-btn--blue">
+                                        <i class="zmdi zmdi-plus"></i>add item</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-25">
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="overview-item overview-item--c1">
+                                    <div class="overview__inner">
+                                        <div class="overview-box clearfix">
+                                            <div class="icon">
+                                                <i class="zmdi zmdi-account-o"></i>
+                                            </div>
+                                            <div class="text">
+                                                <h2>10368</h2>
+                                                <span>members online</span>
+                                            </div>
+                                        </div>
+                                        <div class="overview-chart">
+                                            <canvas id="widgetChart1"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="overview-item overview-item--c2">
+                                    <div class="overview__inner">
+                                        <div class="overview-box clearfix">
+                                            <div class="icon">
+                                                <i class="zmdi zmdi-shopping-cart"></i>
+                                            </div>
+                                            <div class="text">
+                                                <h2>388,688</h2>
+                                                <span>items solid</span>
+                                            </div>
+                                        </div>
+                                        <div class="overview-chart">
+                                            <canvas id="widgetChart2"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="overview-item overview-item--c3">
+                                    <div class="overview__inner">
+                                        <div class="overview-box clearfix">
+                                            <div class="icon">
+                                                <i class="zmdi zmdi-calendar-note"></i>
+                                            </div>
+                                            <div class="text">
+                                                <h2>1,086</h2>
+                                                <span>this week</span>
+                                            </div>
+                                        </div>
+                                        <div class="overview-chart">
+                                            <canvas id="widgetChart3"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="overview-item overview-item--c4">
+                                    <div class="overview__inner">
+                                        <div class="overview-box clearfix">
+                                            <div class="icon">
+                                                <i class="zmdi zmdi-money"></i>
+                                            </div>
+                                            <div class="text">
+                                                <h2>$1,060,386</h2>
+                                                <span>total earnings</span>
+                                            </div>
+                                        </div>
+                                        <div class="overview-chart">
+                                            <canvas id="widgetChart4"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="au-card au-card--no-shadow au-card--no-pad m-b-40">
+                                    <div class="au-card-title" style="background-image:url('images/bg-title-01.jpg');">
+                                        <div class="bg-overlay bg-overlay--blue"></div>
+                                        <h3>
+                                            <i class="zmdi zmdi-account-calendar"></i>26 April, 2018</h3>
+                                        <button class="au-btn-plus">
+                                            <i class="zmdi zmdi-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="au-task js-list-load">
+                                        <div class="au-task__title">
+                                            <p>Tasks for John Doe</p>
+                                        </div>
+                                        <div class="au-task-list js-scrollbar3">
+                                            <div class="au-task__item au-task__item--danger">
+                                                <div class="au-task__item-inner">
+                                                    <h5 class="task">
+                                                        <a href="#">Meeting about plan for Admin Template 2018</a>
+                                                    </h5>
+                                                    <span class="time">10:00 AM</span>
+                                                </div>
+                                            </div>
+                                            <div class="au-task__item au-task__item--warning">
+                                                <div class="au-task__item-inner">
+                                                    <h5 class="task">
+                                                        <a href="#">Create new task for Dashboard</a>
+                                                    </h5>
+                                                    <span class="time">11:00 AM</span>
+                                                </div>
+                                            </div>
+                                            <div class="au-task__item au-task__item--primary">
+                                                <div class="au-task__item-inner">
+                                                    <h5 class="task">
+                                                        <a href="#">Meeting about plan for Admin Template 2018</a>
+                                                    </h5>
+                                                    <span class="time">02:00 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="au-task__item au-task__item--success">
+                                                <div class="au-task__item-inner">
+                                                    <h5 class="task">
+                                                        <a href="#">Create new task for Dashboard</a>
+                                                    </h5>
+                                                    <span class="time">03:30 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="au-task__item au-task__item--danger js-load-item">
+                                                <div class="au-task__item-inner">
+                                                    <h5 class="task">
+                                                        <a href="#">Meeting about plan for Admin Template 2018</a>
+                                                    </h5>
+                                                    <span class="time">10:00 AM</span>
+                                                </div>
+                                            </div>
+                                            <div class="au-task__item au-task__item--warning js-load-item">
+                                                <div class="au-task__item-inner">
+                                                    <h5 class="task">
+                                                        <a href="#">Create new task for Dashboard</a>
+                                                    </h5>
+                                                    <span class="time">11:00 AM</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="au-task__footer">
+                                            <button class="au-btn au-btn-load js-load-btn">load more</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="au-card au-card--no-shadow au-card--no-pad m-b-40">
+                                    <div class="au-card-title" style="background-image:url('images/bg-title-02.jpg');">
+                                        <div class="bg-overlay bg-overlay--blue"></div>
+                                        <h3>
+                                            <i class="zmdi zmdi-comment-text"></i>New Messages</h3>
+                                        <button class="au-btn-plus">
+                                            <i class="zmdi zmdi-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="au-inbox-wrap js-inbox-wrap">
+                                        <div class="au-message js-list-load">
+                                            <div class="au-message__noti">
+                                                <p>You Have
+                                                    <span>2</span>
 
-    <!-- Booking Details Section -->
-    <section class="dashboard-section" id="bookingDetails">
-        <h2>Booking Details</h2>
-        <table>
-            <tr>
-                <th>Edit</th>
-                <th>Username</th>
-                <th>Booking Date</th>
-                <th>Token Amount</th>
-                <th>End Date</th>
-                <th>Property ID</th>
-                <th>Building Type</th>
-                <th>Booking ID</th>
-            </tr>
-            <?php
-            $bookingQuery = "SELECT * from booking";
-            $bookingResult = $conn->query($bookingQuery);
-            while ($booking = $bookingResult->fetch_assoc()):
-            ?>
-                <tr>
-                    <td>
-                        <button class="edit-button" onclick="showEditForm('bookingDetails', '<?= $booking['booking_id'] ?>')">Edit</button>
-                    </td>
-                    <td><?= $booking['username'] ?></td>
-                    <td><?= $booking['booking_date'] ?></td>
-                    <td><?= $booking['token_amount'] ?></td>
-                    <td><?= $booking['end_date'] ?></td>
-                    <td><?= $booking['bid'] ?></td>
-                    <td><?= $booking['building_type'] ?></td>
-                    <td><?= $booking['booking_id'] ?></td>
-                </tr>
-            <?php endwhile; ?>
-        </table>
-    </section>
+                                                    new messages
+                                                </p>
+                                            </div>
+                                            <div class="au-message-list">
+                                                <div class="au-message__item unread">
+                                                    <div class="au-message__item-inner">
+                                                        <div class="au-message__item-text">
+                                                            <div class="avatar-wrap">
+                                                                <div class="avatar">
+                                                                    <img src="images/icon/avatar-02.jpg" alt="John Smith">
+                                                                </div>
+                                                            </div>
+                                                            <div class="text">
+                                                                <h5 class="name">John Smith</h5>
+                                                                <p>Have sent a photo</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="au-message__item-time">
+                                                            <span>12 Min ago</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="au-message__item unread">
+                                                    <div class="au-message__item-inner">
+                                                        <div class="au-message__item-text">
+                                                            <div class="avatar-wrap online">
+                                                                <div class="avatar">
+                                                                    <img src="images/icon/avatar-03.jpg" alt="Nicholas Martinez">
+                                                                </div>
+                                                            </div>
+                                                            <div class="text">
+                                                                <h5 class="name">Nicholas Martinez</h5>
+                                                                <p>You are now connected on message</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="au-message__item-time">
+                                                            <span>11:00 PM</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="au-message__item">
+                                                    <div class="au-message__item-inner">
+                                                        <div class="au-message__item-text">
+                                                            <div class="avatar-wrap online">
+                                                                <div class="avatar">
+                                                                    <img src="images/icon/avatar-04.jpg" alt="Michelle Sims">
+                                                                </div>
+                                                            </div>
+                                                            <div class="text">
+                                                                <h5 class="name">Michelle Sims</h5>
+                                                                <p>Lorem ipsum dolor sit amet</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="au-message__item-time">
+                                                            <span>Yesterday</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="au-message__item">
+                                                    <div class="au-message__item-inner">
+                                                        <div class="au-message__item-text">
+                                                            <div class="avatar-wrap">
+                                                                <div class="avatar">
+                                                                    <img src="images/icon/avatar-05.jpg" alt="Michelle Sims">
+                                                                </div>
+                                                            </div>
+                                                            <div class="text">
+                                                                <h5 class="name">Michelle Sims</h5>
+                                                                <p>Purus feugiat finibus</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="au-message__item-time">
+                                                            <span>Sunday</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="au-message__item js-load-item">
+                                                    <div class="au-message__item-inner">
+                                                        <div class="au-message__item-text">
+                                                            <div class="avatar-wrap online">
+                                                                <div class="avatar">
+                                                                    <img src="images/icon/avatar-04.jpg" alt="Michelle Sims">
+                                                                </div>
+                                                            </div>
+                                                            <div class="text">
+                                                                <h5 class="name">Michelle Sims</h5>
+                                                                <p>Lorem ipsum dolor sit amet</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="au-message__item-time">
+                                                            <span>Yesterday</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="au-message__item js-load-item">
+                                                    <div class="au-message__item-inner">
+                                                        <div class="au-message__item-text">
+                                                            <div class="avatar-wrap">
+                                                                <div class="avatar">
+                                                                    <img src="images/icon/avatar-05.jpg" alt="Michelle Sims">
+                                                                </div>
+                                                            </div>
+                                                            <div class="text">
+                                                                <h5 class="name">Michelle Sims</h5>
+                                                                <p>Purus feugiat finibus</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="au-message__item-time">
+                                                            <span>Sunday</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="au-message__footer">
+                                                <button class="au-btn au-btn-load js-load-btn">load more</button>
+                                            </div>
+                                        </div>
+                                        <div class="au-chat">
+                                            <div class="au-chat__title">
+                                                <div class="au-chat-info">
+                                                    <div class="avatar-wrap online">
+                                                        <div class="avatar avatar--small">
+                                                            <img src="images/icon/avatar-02.jpg" alt="John Smith">
+                                                        </div>
+                                                    </div>
+                                                    <span class="nick">
+                                                        <a href="#">John Smith</a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="au-chat__content">
+                                                <div class="recei-mess-wrap">
+                                                    <span class="mess-time">12 Min ago</span>
+                                                    <div class="recei-mess__inner">
+                                                        <div class="avatar avatar--tiny">
+                                                            <img src="images/icon/avatar-02.jpg" alt="John Smith">
+                                                        </div>
+                                                        <div class="recei-mess-list">
+                                                            <div class="recei-mess">Lorem ipsum dolor sit amet, consectetur adipiscing elit non iaculis</div>
+                                                            <div class="recei-mess">Donec tempor, sapien ac viverra</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="send-mess-wrap">
+                                                    <span class="mess-time">30 Sec ago</span>
+                                                    <div class="send-mess__inner">
+                                                        <div class="send-mess-list">
+                                                            <div class="send-mess">Lorem ipsum dolor sit amet, consectetur adipiscing elit non iaculis</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="au-chat-textfield">
+                                                <form class="au-form-icon">
+                                                    <input class="au-input au-input--full au-input--h65" type="text" placeholder="Type a message">
+                                                    <button class="au-input-icon">
+                                                        <i class="zmdi zmdi-camera"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="copyright">
+                                    <p>Copyright © 2018 Colorlib. All rights reserved. Template by <a href="https://colorlib.com">Colorlib</a>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END MAIN CONTENT-->
+            <!-- END PAGE CONTAINER-->
+        </div>
 
-    <!-- Edit Forms -->
-    <div id="userAccountsEditForm" class="dashboard-section" style="display: none;">
-        <h2>Edit User Account</h2>
-        <form method="post" action="">
-            <input type="hidden" name="section" value="userAccounts">
-            <label for="userAccountsColumn">Select Column to Edit:</label>
-            <select name="column" id="userAccountsColumn">
-                <?php
-                $userColumns = ['userid', 'username', 'name', 'phone', 'email', 'password', 'address'];
-                foreach ($userColumns as $column):
-                ?>
-                    <option value="<?= $column ?>"><?= $column ?></option>
-                <?php endforeach; ?>
-            </select>
-            <label for="userAccountsId">Enter User ID:</label>
-            <input type="text" name="id" id="userAccountsId" required>
-            <label for="userAccountsNewValue">Enter New Value:</label>
-            <input type="text" name="newValue" id="userAccountsNewValue" required>
-            <button type="submit" name="editSubmit">Edit</button>
-        </form>
     </div>
 
-    <div id="propertyDetailsEditForm" class="dashboard-section" style="display: none;">
-        <h2>Edit Property Details</h2>
-        <form method="post" action="">
-            <input type="hidden" name="section" value="propertyDetails">
-            <label for="propertyDetailsColumn">Select Column to Edit:</label>
-            <select name="column" id="propertyDetailsColumn">
-                <?php
-                $propertyColumns = ['bid', 'areainsqft', 'description', 'bedrooms', 'bathrooms', 'floor', 'roof', 'age', 'condition', 'building_type', 'price', 'address'];
-                foreach ($propertyColumns as $column):
-                ?>
-                    <option value="<?= $column ?>"><?= $column ?></option>
-                <?php endforeach; ?>
-            </select>
-            <label for="propertyDetailsId">Enter Property ID:</label>
-            <input type="text" name="id" id="propertyDetailsId" required>
-            <label for="propertyDetailsNewValue">Enter New Value:</label>
-            <input type="text" name="newValue" id="propertyDetailsNewValue" required>
-            <button type="submit" name="editSubmit">Edit</button>
-        </form>
-    </div>
-
-    <div id="bookingDetailsEditForm" class="dashboard-section" style="display: none;">
-        <h2>Edit Booking Details</h2>
-        <form method="post" action="">
-            <input type="hidden" name="section" value="bookingDetails">
-            <label for="bookingDetailsColumn">Select Column to Edit:</label>
-            <select name="column" id="bookingDetailsColumn">
-                <?php
-                $bookingColumns = ['username', 'booking_date', 'token_amount', 'end_date', 'bid', 'building_type', 'booking_id'];
-                foreach ($bookingColumns as $column):
-                ?>
-                    <option value="<?= $column ?>"><?= $column ?></option>
-                <?php endforeach; ?>
-            </select>
-            <label for="bookingDetailsId">Enter Booking ID:</label>
-            <input type="text" name="id" id="bookingDetailsId" required>
-            <label for="bookingDetailsNewValue">Enter New Value:</label>
-            <input type="text" name="newValue" id="bookingDetailsNewValue" required>
-            <button type="submit" name="editSubmit">Edit</button>
-        </form>
-    </div>
-
-    <script>
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.dashboard-section').forEach(function(section) {
-                section.classList.remove('active');
-            });
-
-            // Show the selected section
-            document.getElementById(sectionId).classList.add('active');
-        }
-
-        function showEditForm(section, id) {
-            // Hide all edit forms
-            document.querySelectorAll('.dashboard-section').forEach(function(editForm) {
-                editForm.style.display = 'none';
-            });
-
-            // Show the edit form for the selected section and ID
-            document.getElementById(section + 'EditForm').style.display = 'block';
-
-            // Set the ID in the edit form
-            document.getElementById(section + 'Id').value = id;
-        }
+    <!-- Jquery JS-->
+    <script src="vendor/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap JS-->
+    <script src="vendor/bootstrap-4.1/popper.min.js"></script>
+    <script src="vendor/bootstrap-4.1/bootstrap.min.js"></script>
+    <!-- Vendor JS       -->
+    <script src="vendor/slick/slick.min.js">
     </script>
+    <script src="vendor/wow/wow.min.js"></script>
+    <script src="vendor/animsition/animsition.min.js"></script>
+    <script src="vendor/bootstrap-progressbar/bootstrap-progressbar.min.js">
+    </script>
+    <script src="vendor/counter-up/jquery.waypoints.min.js"></script>
+    <script src="vendor/counter-up/jquery.counterup.min.js">
+    </script>
+    <script src="vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="vendor/chartjs/Chart.bundle.min.js"></script>
+    <script src="vendor/select2/select2.min.js">
+    </script>
+
+    <!-- Main JS-->
+    <script src="js/main.js"></script>
+
 </body>
+
 </html>
+<!-- end document-->

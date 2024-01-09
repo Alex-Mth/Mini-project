@@ -75,6 +75,9 @@ if ($bookingResult->num_rows > 0) {
 
     <!-- Your Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
 </head>
 
 <style>
@@ -165,62 +168,50 @@ if ($bookingResult->num_rows > 0) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
+                                <?php
 global $productId;
+
 if (isset($_SESSION['username'])) {
-  $username = $_SESSION['username'];
-  $cartItemsQuery = "SELECT bid, address, building_type, price FROM building WHERE username = ?";
-  $stmt = $conn->prepare($cartItemsQuery);
+    $username = $_SESSION['username'];
+    $ordersQuery = "SELECT  o.username, b.address, b.building_type, b.price, i.image
+    FROM `order` o
+    JOIN building b ON o.bid = b.bid
+    JOIN building_images i ON o.bid = i.bid
+    WHERE o.username = ?";
+    $stmt = $conn->prepare($ordersQuery);
 
-  if ($stmt) {
-    $stmt->bind_param("s", $_SESSION['username']);
-    $stmt->execute();
-    $cartItemsResult = $stmt->get_result();
+    if ($stmt) {
+        $stmt->bind_param("s", $_SESSION['username']);
+        $stmt->execute();
+        $ordersResult = $stmt->get_result();
 
-    if (!empty($cartItemsResult) && $cartItemsResult->num_rows > 0) {
-      while ($row = $cartItemsResult->fetch_assoc()) {
+        if (!empty($ordersResult) && $ordersResult->num_rows > 0) {
+            while ($row = $ordersResult->fetch_assoc()) {
+                $productImage = $row['image'];
+                $productName = $row['address'];
+                $quantity = $row['building_type'];
+                $price = $row['price'];
 
-        $bid = $row['bid'];
-        $imageQuery = "SELECT image FROM building_images WHERE bid = ?";
-        $imageStmt = $conn->prepare($imageQuery);
-        
-        if ($imageStmt) {
-          $imageStmt->bind_param("i", $bid);
-          $imageStmt->execute();
-          $imageResult = $imageStmt->get_result();
-          
-          if ($imageResult->num_rows > 0) {
-            $imageRow = $imageResult->fetch_assoc();
-            $productImage = $imageRow['image'];
-
-            $productName = $row['address'];
-            $quantity = $row['building_type'];
-            $price = $row['price'];
-
-            echo "<tr>
-                    <td><img src='$productImage' alt='$productName' style='max-width: 100px; max-height: 100px;'></td>
-                    <td>$productName</td>
-                    <td>$quantity</td>
-                    <td>₹$price</td>
-                    <td><a href='#' class='btn btn-primary btn-sm remove-item' data-toggle='modal' data-target='#confirmationModal'>X</a></td>
-                  </tr>";
-          }
-          $imageStmt->close();
+                echo "<tr>
+                        <td><img src='$productImage' alt='$productName' style='max-width: 100px; max-height: 100px;'></td>
+                        <td>$productName</td>
+                        <td>$quantity</td>
+                        <td>₹$price</td>
+                        <td><a href='#' class='btn btn-primary btn-sm remove-item' data-toggle='modal' data-target='#confirmationModal'>X</a></td>
+                    </tr>";
+            }
         } else {
-          echo "<tr><td colspan='6'>Error in preparing image statement.</td></tr>";
+            echo "<tr><td colspan='6'>Your order history is empty.</td></tr>";
         }
-      }
+        $stmt->close();
     } else {
-      echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+        echo "<tr><td colspan='6'>Error in preparing statement.</td></tr>";
     }
-    $stmt->close();
-  } else {
-    echo "<tr><td colspan='6'>Error in preparing statement.</td></tr>";
-  }
 } else {
-  echo "<tr><td colspan='6'>User not logged in.</td></tr>";
+    echo "<tr><td colspan='6'>User not logged in.</td></tr>";
 }
 ?>
+
 
                                 </tbody>
                             </table>
@@ -328,6 +319,58 @@ if (isset($_SESSION['username'])) {
 
             <!-- Template Javascript -->
             <script src="js/main.js"></script>
+
+     <!-- ... Your HTML code above ... -->
+
+     <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const removeButtons = document.querySelectorAll(".remove-item");
+
+        removeButtons.forEach(function(button) {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                const tableRow = document.querySelector(tr[data-product-id='${productId}']);
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'Do you want to remove the item?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, remove it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "removeitem.php",
+                            data: {
+                                product_id: bid
+                            },
+                            success: function(response) {
+                                console.log("Item removed from the cart!");
+                                Swal.fire('Removed!',
+                                        'The item has been removed from the cart.',
+                                        'success')
+                                    .then(() => {
+                                        location.reload(true);
+                                    });
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error:", error);
+                                Swal.fire('Error!',
+                                    'There was an error removing the item.',
+                                    'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+    </script>
+
+
 
 </body>
 

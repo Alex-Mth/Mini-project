@@ -118,125 +118,164 @@ include 'config.php';
         <!-- Navbar End -->
 
 
-       <!-- Category Start -->
-       <div class="container-xxl py-5">
-            <div class="container" id="prop">
-                <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h1 class="mb-3">Property Types</h1>
-                    <p></p>
+         <!-- Category Start -->
+<!-- HTML code with PHP modifications for filtering -->
+<div class="container-xxl py-5">
+    <div class="container" id="prop">
+        <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+            <h1 class="mb-3">Property Types</h1>
+            <p></p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="filter_properties.php?type=apartment">
+                    <div class="rounded p-4">
+                        <div class="icon mb-3">
+                            <img class="img-fluid" src="img/icon-apartment.png" alt="Icon">
+                        </div>
+                        <h6>Apartment</h6>
+                        <span>123 Properties</span>
+                    </div>
+                </a>
+            </div>
 
-                </div>
-                <div class="row g-4">
-                    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <a class="cat-item d-block bg-light text-center rounded p-3" href="">
-                            <div class="rounded p-4">
-                                <div class="icon mb-3">
-                                    <img class="img-fluid" src="img/icon-apartment.png" alt="Icon">
-                                </div>
-                                <h6>Apartment</h6>
-                                <span>123 Properties</span>
-                            </div>
-                        </a>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="filter_properties.php?type=villa">
+                    <div class="rounded p-4">
+                        <div class="icon mb-3">
+                            <img class="img-fluid" src="img/icon-villa.png" alt="Icon">
+                        </div>
+                        <h6>Villa</h6>
+                        <span>123 Properties</span>
                     </div>
-                    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                        <a class="cat-item d-block bg-light text-center rounded p-3" href="">
-                            <div class="rounded p-4">
-                                <div class="icon mb-3">
-                                    <img class="img-fluid" src="img/icon-villa.png" alt="Icon">
-                                </div>
-                                <h6>Villa</h6>
-                                <span>123 Properties</span>
-                            </div>
-                        </a>
+                </a>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="filter_properties.php?type=home">
+                    <div class="rounded p-4">
+                        <div class="icon mb-3">
+                            <img class="img-fluid" src="img/icon-house.png" alt="Icon">
+                        </div>
+                        <h6>House</h6>
+                        <span>123 Properties</span>
                     </div>
-                    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
-                        <a class="cat-item d-block bg-light text-center rounded p-3" href="">
-                            <div class="rounded p-4">
-                                <div class="icon mb-3">
-                                    <img class="img-fluid" src="img/icon-house.png" alt="Icon">
-                                </div>
-                                <h6>Home</h6>
-                                <span>123 Properties</span>
-                            </div>
-                        </a>
+                </a>
+            </div>
+
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="filter_properties.php?type=shop">
+                    <div class="rounded p-4">
+                        <div class="icon mb-3">
+                            <img class="img-fluid" src="img/icon-condominium.png" alt="Icon">
+                        </div>
+                        <h6>Shop</h6>
+                        <span>123 Properties</span>
                     </div>
-                    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
-                        <a class="cat-item d-block bg-light text-center rounded p-3" href="">
-                            <div class="rounded p-4">
-                                <div class="icon mb-3">
-                                    <img class="img-fluid" src="img/icon-condominium.png" alt="Icon">
-                                </div>
-                                <h6>Shop</h6>
-                                <span>123 Properties</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                </a>
             </div>
         </div>
+    </div>
+</div>
+
         <!-- Category End -->
 
         
 
-        <!-- Property List Start -->
-        <div class="container" id="emu">
-            <div class="tab-content">
-                <div id="tab-1" class="tab-pane fade show p-0 active">
-                    <div class="row g-4">
+         <!-- Property List Start -->
+         <div class="container" id="emu">
+    <div class="tab-content">
+        <div id="tab-1" class="tab-pane fade show p-0 active">
+            <div class="row g-4">
 
+            <?php
+// Fetch property data from the database
+$sql = "SELECT * FROM building";
+$result = $conn->query($sql);
 
-                        <?php
-                        // Fetch property data from the database
-                        $sql = "SELECT * FROM building";
-                        $result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $propertyId = $row['bid'];
+        $area = $row['areainsqft'];
+        $price = $row['price'];
+        $buildingType = $row['building_type'];
+        $address = $row['address'];
+        $bedrooms = $row['bedrooms'];
+        $bathrooms = $row['bathrooms'];
+        $desc = $row['description'];
+        $city = $row['city'];
 
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                $propertyId = $row['bid'];
-                                $area = $row['areainsqft'];
-                                $price = $row['price'];
-                                $buildingType = $row['building_type'];
-                                $address = $row['address'];
-                                $bedrooms = $row['bedrooms'];
-                                $bathrooms = $row['bathrooms'];
-                                $desc=$row['description'];
-                                // Output the property data in the desired style
-                                $imageSql = "SELECT image FROM building_images WHERE bid = '$propertyId'";
-                                $imageResult = $conn->query($imageSql);
-                                $imageRow = $imageResult->fetch_assoc();
-                                $imageUrl = $imageRow['image'];
+        // Check if the property is booked
+        $bookingsql = "SELECT * FROM booking WHERE bid = '$propertyId'";
+        $bookingResult = $conn->query($bookingsql);
 
-                                // Output the property data in the desired style
-                                echo "<div class='col-lg-4 col-md-6 wow fadeInUp' data-wow-delay='0.1s'>
-                <div class='property-item rounded overflow-hidden'>
-                    <div class='position-relative overflow-hidden'>
-                        <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
-                        <div class='bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3'>For Sell</div>
-                        <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
+        if ($bookingResult->num_rows > 0) {
+            $bookingRow = $bookingResult->fetch_assoc();
+            $isBooked = true; // Property is booked
+            $end_date = $bookingRow['end_date']; // Replace with the actual end_date from your database
+
+            // If the property is not booked or the end_date is in the future, display it
+            if (!$isBooked || strtotime($end_date) < strtotime(date("Y-m-d"))) {
+                // Output the property data in the desired style
+                $imageSql = "SELECT image FROM building_images WHERE bid = '$propertyId'";
+                $imageResult = $conn->query($imageSql);
+                $imageRow = $imageResult->fetch_assoc();
+                $imageUrl = $imageRow['image'];
+
+                echo "<div class='col-lg-4 col-md-6 wow fadeInUp' data-wow-delay='0.1s'>
+                        <div class='property-item rounded overflow-hidden'>
+                            <div class='position-relative overflow-hidden'>
+                                <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
+                                <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
+                            </div>
+                            <div class='p-4 pb-0'>
+                                <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
+                                <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
+                                <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$city </p>
+                                <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
+                            </div>
+                            <div class='d-flex border-top'>
+                                <small class='flex-fill text-center border-end py-2'><i class='fa fa-bed text-primary me-2'></i>$bedrooms Bed</small>
+                                <small class='flex-fill text-center py-2'><i class='fa fa-bath text-primary me-2'></i>$bathrooms Bath</small>
+                            </div>
+                        </div>
+                    </div>";
+            }
+        } else {
+            // If there are no bookings for the property, display it
+            // Output the property data in the desired style
+            $imageSql = "SELECT image FROM building_images WHERE bid = '$propertyId'";
+            $imageResult = $conn->query($imageSql);
+            $imageRow = $imageResult->fetch_assoc();
+            $imageUrl = $imageRow['image'];
+
+            echo "<div class='col-lg-4 col-md-6 wow fadeInUp' data-wow-delay='0.1s'>
+                    <div class='property-item rounded overflow-hidden'>
+                        <div class='position-relative overflow-hidden'>
+                            <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
+                            <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
+                        </div>
+                        <div class='p-4 pb-0'>
+                            <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
+                            <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
+                            <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
+                        </div>
+                        <div class='d-flex border-top'>
+                            <small class='flex-fill text-center border-end py-2'><i class='fa fa-bed text-primary me-2'></i>$bedrooms Bed</small>
+                            <small class='flex-fill text-center py-2'><i class='fa fa-bath text-primary me-2'></i>$bathrooms Bath</small>
+                        </div>
                     </div>
-                    <div class='p-4 pb-0'>
-                        <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
-                        <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
-                        <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
-                    </div>
-                    <div class='d-flex border-top'>
-                        <small class='flex-fill text-center border-end py-2'><i class='fa fa-bed text-primary me-2'></i>$bedrooms Bed</small>
-                        <small class='flex-fill text-center py-2'><i class='fa fa-bath text-primary me-2'></i>$bathrooms Bath</small>
-                    </div>
-                </div>
-            </div>
-        ";
-                            }
-                        } else {
-                            echo "No properties found.";
-                        }
+                </div>";
+        }
+    }
+} else {
+    echo "No properties found.";
+}
 
-                        $conn->close();
-                        ?>
-                    </div>
-                </div>
-            </div>
-        </div>
+$conn->close();
+?>
+
+
         <!-- Property List End -->
 
 

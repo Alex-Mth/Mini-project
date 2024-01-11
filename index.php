@@ -164,7 +164,7 @@ include 'config.php';
                             <img class="img-fluid" src="img/icon-apartment.png" alt="Icon">
                         </div>
                         <h6>Apartment</h6>
-                        <span>123 Properties</span>
+                       
                     </div>
                 </a>
             </div>
@@ -176,7 +176,7 @@ include 'config.php';
                             <img class="img-fluid" src="img/icon-villa.png" alt="Icon">
                         </div>
                         <h6>Villa</h6>
-                        <span>123 Properties</span>
+                        
                     </div>
                 </a>
             </div>
@@ -188,7 +188,7 @@ include 'config.php';
                             <img class="img-fluid" src="img/icon-house.png" alt="Icon">
                         </div>
                         <h6>House</h6>
-                        <span>123 Properties</span>
+
                     </div>
                 </a>
             </div>
@@ -200,7 +200,7 @@ include 'config.php';
                             <img class="img-fluid" src="img/icon-condominium.png" alt="Icon">
                         </div>
                         <h6>Shop</h6>
-                        <span>123 Properties</span>
+                      
                     </div>
                 </a>
             </div>
@@ -252,25 +252,25 @@ if ($result->num_rows > 0) {
                 $imageResult = $conn->query($imageSql);
                 $imageRow = $imageResult->fetch_assoc();
                 $imageUrl = $imageRow['image'];
-
                 echo "<div class='col-lg-4 col-md-6 wow fadeInUp' data-wow-delay='0.1s'>
-                        <div class='property-item rounded overflow-hidden'>
-                            <div class='position-relative overflow-hidden'>
-                                <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
-                                <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
-                            </div>
-                            <div class='p-4 pb-0'>
-                                <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
-                                <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
-                                <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$city </p>
-                                <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
-                            </div>
-                            <div class='d-flex border-top'>
-                                <small class='flex-fill text-center border-end py-2'><i class='fa fa-bed text-primary me-2'></i>$bedrooms Bed</small>
-                                <small class='flex-fill text-center py-2'><i class='fa fa-bath text-primary me-2'></i>$bathrooms Bath</small>
-                            </div>
-                        </div>
-                    </div>";
+                <div class='property-item rounded overflow-hidden'>
+                    <div class='position-relative overflow-hidden'>
+                        <a href='shop_single.php?show=$propertyId'><img class='img-fluid' src='$imageUrl' alt=''></a>
+                        <div class='bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3'>$buildingType</div>
+                    </div>
+                    <div class='p-4 pb-0'>
+                        <h5 class='text-primary mb-3'>$" . number_format($price) . "</h5>
+                        <a class='d-block h5 mb-2' href='shop_single.php?show=$propertyId'>$address</a>
+                        <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$city </p>
+                        <p><i class='fa fa-map-marker-alt text-primary me-2'></i>$area Sqft</p>
+                    </div>
+                    <div class='d-flex border-top'>
+                        <small class='flex-fill text-center border-end py-2'><i class='fa fa-bed text-primary me-2'></i>$bedrooms Bed</small>
+                        <small class='flex-fill text-center py-2'><i class='fa fa-bath text-primary me-2'></i>$bathrooms Bath</small>
+                    </div>
+                </div>
+            </div>";
+        
             }
         } else {
             // If there are no bookings for the property, display it

@@ -281,7 +281,7 @@ if (isset($_SESSION['success_message'])) {
             <option value="" disabled selected>Select a category</option>
             <option value="apartment">Apartment</option>
             <option value="villa">Villa</option>
-            <option value="house">House</option>
+            <option value="home">Home</option>
             <option value="shop">Shop</option>
         </select>
         <br><br>

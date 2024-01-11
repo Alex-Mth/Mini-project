@@ -19,13 +19,14 @@ $username = $_SESSION['username'];
 // Debug: Display user ID
 
 
-// Fetch booking details for the current user
 $bookingSql = "SELECT booking.*, building.address, building.price
                FROM booking
                JOIN building ON booking.bid = building.bid
-               WHERE booking.username = '$username'";
-
-$bookingResult = $conn->query($bookingSql);
+               WHERE booking.username = ?";
+$stmtBooking = $conn->prepare($bookingSql);
+$stmtBooking->bind_param("s", $username);
+$stmtBooking->execute();
+$bookingResult = $stmtBooking->get_result();
 
 if ($bookingResult->num_rows > 0) {
     while ($bookingRow = $bookingResult->fetch_assoc()) {
@@ -150,104 +151,108 @@ if ($bookingResult->num_rows > 0) {
     <div class="container-xxl bg-white p-0">
     <!-- Content section -->
     <div class="container mt-5">
-        <h2>Property</h2>
-        <br><br>
-        <div class="container" id="emu">
-            <div class="tab-content">
-                <div id="tab-1" class="tab-pane fade show p-0 active">
-                    <div class="row g-4">
-                        <div class="row mb-5">
-                            <form class="col-md-12" method="post">
-                                <div class="site-blocks-table">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th class="product-thumbnail">Image</th>
-                                                <th class="product-name">Address</th>
-                                                <th class="product-quantity">Building type</th>
-                                                <th class="product-total">Price</th>
-                                                <th class="product-quantity">Booked by</th>
-                                                <th class="product-total">End date</th>
-                                                <th class="product-total">Status</th>
-                                         
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+    <h2>Property</h2>
+    <br><br>
+    <div class="container" id="emu">
+        <div class="tab-content">
+            <div id="tab-1" class="tab-pane fade show p-0 active">
+                <div class="row g-4">
+                    <div class="row mb-5">
+                        <form class="col-md-12" method="post">
+                            <div class="site-blocks-table">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="product-thumbnail">Image</th>
+                                            <th class="product-name">Address</th>
+                                            <th class="product-quantity">Building type</th>
+                                            <th class="product-total">Price</th>
+                                            <th class="product-quantity">Booked by</th>
+                                            <th class="product-total">End date</th>
+                                            <th class="product-total">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         <?php
-global $productId;
+                                        global $productId;
 
-if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
-    $propertiesQuery = "SELECT b.address, b.building_type, b.price, i.image
-                        FROM building b
-                        JOIN building_images i ON b.bid = i.bid
-                        WHERE b.bid = ?";
+                                        if (isset($_SESSION['username'])) {
+                                            $username = $_SESSION['username'];
+                                            
+                                            // Retrieve property and booking information for the logged-in user
+                                            $propertiesQuery = "
+    SELECT 
+        b.address, 
+        b.building_type, 
+        b.price, 
+        i.image, 
+        COALESCE(o.username, '') AS booked_by, 
+        COALESCE(bo.end_date) AS end_date,
+        CASE
+            WHEN COALESCE( bo.end_date) IS NULL OR COALESCE( bo.end_date) < CURRENT_DATE() THEN 'NOT BOOKED'
+            ELSE 'BOOKED'
+        END AS status
+    FROM 
+        building b
+    JOIN 
+        building_images i ON b.bid = i.bid
+    LEFT JOIN 
+        `booking` bo ON b.bid = bo.bid
+    LEFT JOIN 
+        `order` o ON b.bid = o.bid
+    WHERE 
+        b.username = ?";
 
-    $stmtProperties = $conn->prepare($propertiesQuery);
+                                            $stmtProperties = $conn->prepare($propertiesQuery);
+                                        
+                                            if ($stmtProperties) {
+                                                $stmtProperties->bind_param("s", $username);
+                                                $stmtProperties->execute();
+                                                $propertiesResult = $stmtProperties->get_result();
+                                        
+                                                while ($propertyRow = $propertiesResult->fetch_assoc()) {
+                                                    $productImage = $propertyRow['image'];
+                                                    $productName = $propertyRow['address'];
+                                                    $quantity = $propertyRow['building_type'];
+                                                    $price = $propertyRow['price'];
+                                                    $bookedBy = $propertyRow['booked_by'];
+                                                    $endDate = $propertyRow['end_date'];
 
-    if ($stmtProperties) {
-        $stmtProperties->bind_param("s", $username);
-        $stmtProperties->execute();
-        $propertiesResult = $stmtProperties->get_result();
-
-        if (!empty($propertiesResult) && $propertiesResult->num_rows > 0) {
-            while ($propertyRow = $propertiesResult->fetch_assoc()) {
-                $productImage = $propertyRow['image'];
-                $productName = $propertyRow['address'];
-                $quantity = $propertyRow['building_type'];
-                $price = $propertyRow['price'];
-            
-                // Fetch booking information
-                $bookingQuery = "SELECT username AS booked_by, end_date
-                                FROM booking
-                                WHERE bid = (SELECT bid FROM building WHERE address = ?)";
-            
-                $stmtBooking = $conn->prepare($bookingQuery);
-                $stmtBooking->bind_param("s", $productName);
-                $stmtBooking->execute();
-                $bookingResult = $stmtBooking->get_result();
-            
-                $bookedBy = "";
-                $endDate = "";
-                $status = "NOT BOOKED";
-            
-                if ($bookingResult && $bookingResult->num_rows > 0) {
-                    $bookingRow = $bookingResult->fetch_assoc();
-                    $bookedBy = $bookingRow['booked_by'];
-                    $endDate = $bookingRow['end_date'];
-                    $status = ($endDate) ? "BOOKED" : "NOT BOOKED";
-                }
-            
-                echo "<tr>
-                        <td><img src='$productImage' alt='$productName' style='max-width: 100px; max-height: 100px;'></td>
-                        <td>$productName</td>
-                        <td>$quantity</td>
-                        <td>₹$price</td>
-                        <td>$bookedBy</td>
-                        <td>$endDate</td>
-                        <td>$status</td>
-                    </tr>";
-            }
-            
-        } else {
-            echo "<tr><td colspan='7'>No properties uploaded by $username.</td></tr>";
-        }
-
-        $stmtProperties->close();
-        $stmtBooking->close();
-    } else {
-        echo "<tr><td colspan='7'>Error in preparing statement.</td></tr>";
-    }
-} else {
-    echo "<tr><td colspan='7'>User not logged in.</td></tr>";
-}
-?>
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </form>
-                        </div>
+                                                    $status = $propertyRow['status'];
+                                            
+                                                    if ($endDate) {
+                                                        // If end date exists, check if it's in the future
+                                                        $currentDate = date('Y-m-d');
+                                                        if ($endDate >= $currentDate) {
+                                                            $status = "BOOKED";
+                                                        }
+                                                    }
+                                                    // Display property and booking information in the table
+                                                    echo "<tr>
+                                                            <td><img src='$productImage' alt='$productName' style='max-width: 100px; max-height: 100px;'></td>
+                                                            <td>$productName</td>
+                                                            <td>$quantity</td>
+                                                            <td>₹$price</td>
+                                                            <td>$bookedBy</td>
+                                                            <td>$endDate</td>
+                                                            <td>$status</td>
+                                                          </tr>";
+                                                }
+                                        
+                                                $stmtProperties->close();
+                                            } else {
+                                                echo "<tr><td colspan='7'>Error in preparing statement.</td></tr>";
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='7'>User not logged in.</td></tr>";
+                                            return; // Add this line to stop further execution when the user is not logged in
+                                        }
+                    ?>
+                                                    
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

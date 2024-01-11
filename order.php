@@ -18,26 +18,7 @@ $username = $_SESSION['username'];
 // Debug: Display user ID
 
 
-// Fetch booking details for the current user
-$bookingSql = "SELECT booking.*, building.address, building.price
-               FROM booking
-               JOIN building ON booking.bid = building.bid
-               WHERE booking.username = '$username'";
 
-$bookingResult = $conn->query($bookingSql);
-
-if ($bookingResult->num_rows > 0) {
-    while ($bookingRow = $bookingResult->fetch_assoc()) {
-        // Access the booking details and additional information here
-        $bookingId = $bookingRow['booking_id'];
-        $propertyAddress = $bookingRow['address'];
-        $propertyPrice = $bookingRow['price'];
-        // ... other booking details
-    }
-    // Rest of your code for displaying or processing the booking details
-} else {
-    echo "No bookings found for the user.";
-}
 ?>
 
 <!-- The rest of your HTML code here -->
@@ -75,6 +56,9 @@ if ($bookingResult->num_rows > 0) {
 
     <!-- Your Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
 </head>
 
 <style>
@@ -152,84 +136,72 @@ if ($bookingResult->num_rows > 0) {
                     <div id="tab-1" class="tab-pane fade show p-0 active">
                         <div class="row g-4">
                         <div class="row mb-5">
-                        <form class="col-md-12" method="post">
-    <div class="site-blocks-table">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th class="product-thumbnail">Image</th>
-                    <th class="product-name">Address</th>
-                    <th class="product-quantity">Building type</th>
-                    <th class="product-total">Price</th>
-                    <th class="product-remove">Remove</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php
+                    <form class="col-md-12" method="post">
+                        <div class="site-blocks-table">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="product-thumbnail">Image</th>
+                                        <th class="product-name">Address</th>
+                                        <th class="product-quantity">Building type</th>
+                                        <th class="product-total">Price</th>
+                                        <th class="product-remove">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php
 global $productId;
+
 if (isset($_SESSION['username'])) {
-    $cartItemsQuery = "SELECT building.bid, building.address, building.building_type, building.price, booking.username AS booked_by, booking.end_date
-                        FROM building
-                        JOIN booking ON building.bid = booking.bid
-                        WHERE booking.username = ?";
-    $stmt = $conn->prepare($cartItemsQuery);
+    $username = $_SESSION['username'];
+
+    // Modify the SQL query to fetch booked properties
+    $ordersQuery = "SELECT b.address, b.building_type, b.price, i.image
+                    FROM `order` o
+                    JOIN building b ON o.bid = b.bid
+                    JOIN building_images i ON b.bid = i.bid
+                    WHERE o.username = ?";
+
+    $stmt = $conn->prepare($ordersQuery);
 
     if ($stmt) {
-        $stmt->bind_param("s", $_SESSION['username']);
+        $stmt->bind_param("s", $username);
         $stmt->execute();
-        $cartItemsResult = $stmt->get_result();
+        $ordersResult = $stmt->get_result();
 
-        if (!empty($cartItemsResult) && $cartItemsResult->num_rows > 0) {
-            while ($row = $cartItemsResult->fetch_assoc()) {
-                $bid = $row['bid'];
-                $imageQuery = "SELECT image FROM building_images WHERE bid = ?";
-                $imageStmt = $conn->prepare($imageQuery);
+        if (!empty($ordersResult) && $ordersResult->num_rows > 0) {
+            while ($row = $ordersResult->fetch_assoc()) {
+                $productImage = $row['image'];
+                $productName = $row['address'];
+                $quantity = $row['building_type'];
+                $price = $row['price'];
 
-                if ($imageStmt) {
-                    $imageStmt->bind_param("i", $bid);
-                    $imageStmt->execute();
-                    $imageResult = $imageStmt->get_result();
-
-                    if ($imageResult->num_rows > 0) {
-                        $imageRow = $imageResult->fetch_assoc();
-                        $productImage = $imageRow['image'];
-
-                        $productName = $row['address'];
-                        $quantity = $row['building_type'];
-                        $price = $row['price'];
-
-                        echo "<tr>
-                                <td><img src='$productImage' alt='$productName' style='max-width: 100px; max-height: 100px;'></td>
-                                <td>$productName</td>
-                                <td>$quantity</td>
-                                <td>₹$price</td>";
-
-                        // Remove button
-                        echo "<td style='text-align: center; padding-top: 20px;'><a href='#' class='btn btn-primary btn-sm remove-item' data-toggle='modal' data-target='#confirmationModal'>X</a></td>
-                            </tr>";
-                    }
-                    $imageStmt->close();
-                } else {
-                    echo "<tr><td colspan='6'>Error in preparing image statement.</td></tr>";
-                }
+                echo "<tr>
+                <td><img src='$productImage' alt='$productName' style='max-width: 100px; max-height: 100px;'></td>
+                <td>$productName</td>
+                <td>$quantity</td>
+                <td>₹$price</td>
+                <td><button class='btn btn-danger btn-sm remove-item' data-product-id='$productId'>Remove</button></td>
+              </tr>";
             }
         } else {
-            echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+            echo "<tr><td colspan='5'>No booked properties found for the user.</td></tr>";
         }
+
         $stmt->close();
     } else {
-        echo "<tr><td colspan='6'>Error in preparing statement.</td></tr>";
+        echo "<tr><td colspan='5'>Error in preparing statement.</td></tr>";
     }
 } else {
-    echo "<tr><td colspan='6'>User not logged in.</td></tr>";
+    echo "<tr><td colspan='5'>User not logged in.</td></tr>";
 }
 ?>
 
-</tbody>
 
-</table>
-    </div>
-</form>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
                 </div>
 
                     </div>
@@ -329,9 +301,44 @@ if (isset($_SESSION['username'])) {
             <script src="lib/easing/easing.min.js"></script>
             <script src="lib/waypoints/waypoints.min.js"></script>
             <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
 
             <!-- Template Javascript -->
             <script src="js/main.js"></script>
+<!-- Add this script at the end of your HTML to handle the removal functionality -->
+<script>
+    $(document).ready(function () {
+        // Use event delegation to handle dynamically added elements
+        $("tbody").on("click", ".remove-item", function () {
+            var productId = $(this).data('product-id');
+            var rowToRemove = $(this).closest("tr");
+
+            // Use AJAX to remove the item from the database
+            $.ajax({
+                type: "POST",
+                url: "removeitem.php",
+                data: {
+                    product_id: productId
+                },
+                success: function (response) {
+                    console.log("Item removed from the database!");
+                    // Remove the row from the table
+                    rowToRemove.remove();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    // Handle the error as needed
+                }
+            });
+        });
+    });
+</script>
+
 
 </body>
 

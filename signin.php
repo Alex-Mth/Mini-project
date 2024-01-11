@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($userId == 0) {
             // Admin
-            header("Location: admin.php");
+            header("Location: admin1.php");
             exit();
         } elseif ($userId == 1) {
             // Regular user

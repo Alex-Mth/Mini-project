@@ -59,6 +59,15 @@ $username = $_SESSION['username'];
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
+    <!-- Load jQuery first -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<!-- Then load your custom script -->
+<script src="path/to/your/script.js"></script>
+
+
+
+
 </head>
 
 <style>
@@ -309,30 +318,31 @@ if (isset($_SESSION['username'])) {
 
 
             <!-- Template Javascript -->
-            <script src="js/main.js"></script>
-<!-- Add this script at the end of your HTML to handle the removal functionality -->
-<script>
-    $(document).ready(function () {
-        // Use event delegation to handle dynamically added elements
-        $("tbody").on("click", ".remove-item", function () {
-            var productId = $(this).data('product-id');
+            <script>
+   $(document).ready(function () {
+    console.log("Document ready. jQuery is working.");
+
+    $("tbody").on("click", ".remove-item", function () {
+       
+            var productId = $(this).data('bid');
             var rowToRemove = $(this).closest("tr");
 
-            // Use AJAX to remove the item from the database
+            // Use AJAX to remove the item from the order
             $.ajax({
                 type: "POST",
-                url: "removeitem.php",
+                url: "removeitem.php",  // Change this to the actual PHP file handling the removal
                 data: {
-                    product_id: productId
+                    product_id: bid
                 },
                 success: function (response) {
-                    console.log("Item removed from the database!");
+                    console.log("Item removed from the order!");
                     // Remove the row from the table
                     rowToRemove.remove();
+
+                    // If needed, you can also update the shop or perform other actions
                 },
-                error: function (xhr, status, error) {
-                    console.error("Error:", error);
-                    // Handle the error as needed
+                fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("AJAX Error:", textStatus, errorThrown);
                 }
             });
         });
